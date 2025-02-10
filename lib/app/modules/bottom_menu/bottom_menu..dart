@@ -41,7 +41,7 @@ class _BottomMenuState extends State<BottomMenu> {
         Get.offAndToNamed(Routes.HOME);
         break;
       case 1:
-        Get.offAllNamed(Routes.CABINETRY);
+        Get.offAndToNamed(Routes.CABINETRY);
         break;
       case 2:
         Get.offAndToNamed(Routes.CART);

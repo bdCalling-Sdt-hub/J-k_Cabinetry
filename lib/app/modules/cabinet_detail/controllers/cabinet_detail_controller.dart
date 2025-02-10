@@ -1,23 +1,21 @@
 import 'package:get/get.dart';
 
 class CabinetDetailController extends GetxController {
-  //TODO: Implement CabinetDetailController
 
-  final count = 0.obs;
-  @override
-  void onInit() {
-    super.onInit();
+
+  RxList<int> quantity = <int>[1].obs;
+
+  buildItemList(int itemLength){
+    quantity.value = List.generate(itemLength, (index) => 1).obs;
   }
 
-  @override
-  void onReady() {
-    super.onReady();
+  void increment(int index) {
+    quantity[index] ++;
   }
 
-  @override
-  void onClose() {
-    super.onClose();
+  void decrement(int index) {
+    if (quantity[index] > 1 ) {
+      quantity[index] --;
+    }
   }
-
-  void increment() => count.value++;
 }

@@ -17,6 +17,7 @@ class AppButton extends StatelessWidget {
   final bool? isIconWithTextActive;
   final String? iconPath;
   final TextStyle? textStyle;
+  final double? borderRadius;
 
   const AppButton(
       {super.key,
@@ -29,7 +30,7 @@ class AppButton extends StatelessWidget {
       this.buttonColor,
       this.containerVerticalPadding,
       this.containerHorizontalPadding,
-      this.isIconWithTextActive = false, this.iconPath, this.textStyle});
+      this.isIconWithTextActive = false, this.iconPath, this.textStyle, this.borderRadius});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class AppButton extends StatelessWidget {
         // Button padding
         decoration: BoxDecoration(
           color: buttonColor ?? AppColors.primaryColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(borderRadius??0),
           border: isBorderActive == true
               ? Border.all(
                   color: borderColors ?? Colors.white,

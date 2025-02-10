@@ -48,56 +48,85 @@ class AppDrawer extends StatelessWidget {
                     'Login',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.person_outline),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                   // Get.toNamed(Routes.PROFILE);
+                    Get.toNamed(Routes.SIGN_IN);
                   },
                 ),
                 ListTile(
                   title: Text('Home',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.event_note_outlined),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                   // Get.toNamed(Routes.EVENT_LIST);
+                    Get.toNamed(Routes.HOME);
                   },
                 ),
                 ListTile(
                   title: Text('Shop Cabinet Lines',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.notifications_none_outlined),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                   // Get.toNamed(Routes.NOTIFICATION);
+                    Get.toNamed(Routes.CABINETRY);
                   },
                 ),
                 ListTile(
                   title: Text('Cabinetry Specs',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.contact_support_outlined),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                    //Get.toNamed(Routes.SUPPORT);
+                    Get.toNamed(Routes.CABINET_DETAIL);
                   },
                 ),
                 ExpansionTile(
-                  leading: const Icon(Icons.school_outlined),
                   expandedCrossAxisAlignment: CrossAxisAlignment.start,
                     title: Text('Our quality',style:  AppStyles.h4(fontWeight: FontWeight.bold),),
-                  children: qualityList.map((qualityItem){
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8.h),
-                      child: Text(qualityItem,style:  AppStyles.h5(fontWeight: FontWeight.w400),),
-                    );
-                  }).toList(),
+                  children: List.generate(
+                    qualityList.length, (index) {
+                      return InkWell(
+                        onTap: () {
+                          switch(index){
+                            case 0:
+                              Get.offAndToNamed(Routes.SIGN_IN);
+                              break;
+
+                              case 1:
+                              Get.offAndToNamed(Routes.CART);
+                              break;
+
+                              case 2:
+                              Get.offAndToNamed(Routes.CABINETRY);
+                              break;
+
+                              case 3:
+                              Get.offAndToNamed(Routes.HOME);
+                              break;
+
+                              case 4:
+                              Get.offAndToNamed(Routes.PROFILE);
+                              break;
+
+                            default:
+                              print("Invalid selection");
+                              break;
+
+                          }
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          child: Text(qualityList[index],
+                            style: AppStyles.h5(fontWeight: FontWeight.w400),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
 
                 ListTile(
@@ -105,34 +134,26 @@ class AppDrawer extends StatelessWidget {
                     'Registration',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.shopping_cart_outlined),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                   // ExternalUrlLauncher.lunchUrl(ExternalUrl.shopUrl);
+                    Get.toNamed(Routes.SIGN_UP);
                   },
                 ),
                 ListTile(
                   title: Text('Cart',
                     style: AppStyles.h3(),
                   ),
-                  leading: Icon(Icons.privacy_tip_outlined),
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                   // ExternalUrlLauncher.lunchUrl(ExternalUrl.privacyPolicyUrl);
+                    Get.toNamed(Routes.CART);
                   },
                 ),
                 ListTile(
                   title: Text(
                     'Settings',
                     style: AppStyles.h3(),
-                  ),
-                  leading: SvgPicture.asset(
-                    AppIcons.termConditionIcon,
-                    height: 32.h,
-                    colorFilter:
-                        const ColorFilter.mode(Colors.black, BlendMode.srcIn),
                   ),
                   horizontalTitleGap: 20.w,
                   onTap: () {

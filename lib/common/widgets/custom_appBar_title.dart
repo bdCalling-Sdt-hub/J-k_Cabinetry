@@ -12,7 +12,7 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.textColor,
     this.notificationCount,
-    this.chatOnTap, this.isShowChat = false,
+    this.chatOnTap, this.isShowChat = false, this.text,
   });
 
   final Color? backgroundColor;
@@ -20,12 +20,13 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
   final String? notificationCount;
   final VoidCallback? chatOnTap;
   final bool isShowChat;
+  final String? text;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: backgroundColor ?? Colors.white,
-      title: Image.asset(AppImage.appLogoImg, height: 35.h),
+      title:text !=null? Text(text??''):Image.asset(AppImage.appLogoImg, height: 35.h),
       centerTitle: true,
       actions: [
         Padding(

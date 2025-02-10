@@ -14,6 +14,7 @@ abstract class Routes {
   static const CABINETRY = _Paths.CABINETRY;
   static const CART = _Paths.CART;
   static const CABINET_DETAIL = _Paths.CABINET_DETAIL;
+  static const CABINET_PARTS = _Paths.CABINET_PARTS;
 }
 
 abstract class _Paths {
@@ -29,4 +30,5 @@ abstract class _Paths {
   static const CABINETRY = '/cabinetry';
   static const CART = '/cart';
   static const CABINET_DETAIL = '/cabinet-detail';
+  static const CABINET_PARTS = '/cabinet-parts';
 }
