@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/recently_viewed_controller.dart';
+import 'package:jk_cabinet/app/routes/app_pages.dart';
 
 class RecentlyViewed extends StatelessWidget {
+   RecentlyViewed({super.key});
   final RecentlyViewedController recentlyViewedController = Get.put(RecentlyViewedController());
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding:  EdgeInsets.all(16.0.sp),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -29,7 +32,7 @@ class RecentlyViewed extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+           SizedBox(height: 8.h),
 
           /// Recently Viewed List
           Obx(() {
@@ -48,37 +51,44 @@ class RecentlyViewed extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Stack(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey.shade300),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            "Jan 21, 2025",
-                            style: TextStyle(fontSize: 14, color: Colors.black54),
-                          ),
-                          const SizedBox(height: 8),
-                          Expanded(
-                            child: Center(
-                              child: Image.network(
-                                recentlyViewedController.recentlyViewed[index],
-                                fit: BoxFit.contain,
+                    GestureDetector(
+                      onTap: (){
+                        Get.toNamed(Routes.CABINET_PARTS_RECENTVIEWED_DETAILS);
+                      },
+                      child: Container(
+                        padding:  EdgeInsets.all(8.sp),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              "Jan 21, 2025",
+                              style: TextStyle(fontSize: 14, color: Colors.black54),
+                            ),
+                             SizedBox(height: 8.h),
+                            Expanded(
+                              child: Center(
+                                child: Image.network(
+                                  recentlyViewedController.recentlyViewed[index],
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                     // Remove Item Button
                     Positioned(
-                      top: 4,
-                      right: 4,
+                      top: 4.h,
+                      right: 4.w,
                       child: GestureDetector(
-                        onTap: () => recentlyViewedController.removeItem(index),
+                        onTap: (){
+                          recentlyViewedController.removeItem(index);
+                        },
                         child: const Icon(Icons.close, size: 20, color: Colors.black54),
                       ),
                     ),

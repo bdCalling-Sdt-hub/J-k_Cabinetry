@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 
@@ -8,11 +9,13 @@ class RecentlyViewedController extends GetxController {
   void onInit() {
     super.onInit();
     /// Dummy data
-    recentlyViewed.addAll([
-      AppNetworkImage.cabinet1Img,
-      AppNetworkImage.cabinet2Img,
-      AppNetworkImage.cabinet3Img,
-    ]);
+    WidgetsBinding.instance.addPostFrameCallback((__){
+      recentlyViewed.addAll([
+        AppNetworkImage.cabinet1Img,
+        AppNetworkImage.cabinet2Img,
+        AppNetworkImage.cabinet3Img,
+      ]);
+    });
   }
 
   void removeItem(int index) {

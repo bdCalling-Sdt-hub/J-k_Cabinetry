@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_common/get_reset.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/cabinet_parts_controller.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/recently_viewed_controller.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/widgets/recently_viewed.dart';
@@ -13,6 +12,8 @@ import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
 class CabinetPartsView extends StatefulWidget {
+  const CabinetPartsView({super.key});
+
   @override
   _CabinetPartsViewState createState() => _CabinetPartsViewState();
 }
@@ -163,7 +164,7 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
               ),
               verticalSpacing(12.h),
               Divider(color: Colors.grey.shade400,),
-              RecentlyViewed()
+              RecentlyViewed(key: widget.key,)
             ],
           ),
         ),

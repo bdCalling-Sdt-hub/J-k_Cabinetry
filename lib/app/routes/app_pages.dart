@@ -1,9 +1,12 @@
 import 'package:get/get.dart';
+import 'package:jk_cabinet/app/modules/cart/views/checkout_view.dart';
 
 import '../modules/cabinet_detail/bindings/cabinet_detail_binding.dart';
 import '../modules/cabinet_detail/views/cabinet_detail_view.dart';
 import '../modules/cabinet_parts/bindings/cabinet_parts_binding.dart';
 import '../modules/cabinet_parts/views/cabinet_parts_view.dart';
+import '../modules/cabinet_parts_recentviewed_details/bindings/cabinet_parts_recentviewed_details_binding.dart';
+import '../modules/cabinet_parts_recentviewed_details/views/cabinet_parts_recentviewed_details_view.dart';
 import '../modules/cabinetry/bindings/cabinetry_binding.dart';
 import '../modules/cabinetry/views/cabinetry_view.dart';
 import '../modules/cart/bindings/cart_binding.dart';
@@ -34,75 +37,74 @@ class AppPages {
 
   static final routes = [
     GetPage(
-      name: _Paths.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
-      transition: Transition.cupertino
+        name: _Paths.HOME,
+        page: () => const HomeView(),
+        binding: HomeBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.SIGN_IN,
+        page: () => const SignInView(),
+        binding: SignInBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.SIGN_UP,
+        page: () => const SignUpView(),
+        binding: SignUpBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.OTP,
+        page: () => const OtpView(),
+        binding: OtpBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.FORGOT_PASSWORD,
+        page: () => const ForgotPasswordView(),
+        binding: ForgotPasswordBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.CHANGE_PASSWORD,
+        page: () => const ChangePasswordView(),
+        binding: ChangePasswordBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.PROFILE,
+        page: () => ProfileView(),
+        binding: ProfileBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.PROFILE_UPDATE,
+        page: () => ProfileUpdateView(),
+        binding: ProfileUpdateBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.CABINETRY,
+        page: () => const CabinetryView(),
+        binding: CabinetryBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.CART,
+        page: () => CartView(),
+        binding: CartBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.CABINET_DETAIL,
+        page: () => const CabinetDetailView(),
+        binding: CabinetDetailBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+        name: _Paths.CABINET_PARTS,
+        page: () => const CabinetPartsView(),
+        binding: CabinetPartsBinding(),
+        transition: Transition.cupertino),
+    GetPage(
+      name: _Paths.CABINET_PARTS_RECENTVIEWED_DETAILS,
+      page: () => const CabinetPartsRecentViewedDetailsView(),
+      binding: CabinetPartsRecentviewedDetailsBinding(),
     ),
     GetPage(
-      name: _Paths.SIGN_IN,
-      page: () => const SignInView(),
-      binding: SignInBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.SIGN_UP,
-      page: () => const SignUpView(),
-      binding: SignUpBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.OTP,
-      page: () => const OtpView(),
-      binding: OtpBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.FORGOT_PASSWORD,
-      page: () => const ForgotPasswordView(),
-      binding: ForgotPasswordBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.CHANGE_PASSWORD,
-      page: () => const ChangePasswordView(),
-      binding: ChangePasswordBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.PROFILE,
-      page: () => ProfileView(),
-      binding: ProfileBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.PROFILE_UPDATE,
-      page: () => ProfileUpdateView(),
-      binding: ProfileUpdateBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.CABINETRY,
-      page: () => const CabinetryView(),
-      binding: CabinetryBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.CART,
-      page: () => const CartView(),
-      binding: CartBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.CABINET_DETAIL,
-      page: () => const CabinetDetailView(),
-      binding: CabinetDetailBinding(),
-        transition: Transition.cupertino
-    ),
-    GetPage(
-      name: _Paths.CABINET_PARTS,
-      page: () =>  CabinetPartsView(),
-      binding: CabinetPartsBinding(),
+        name: _Paths.CHECKOUT,
+        page: () => CheckoutView(),
+        binding: CartBinding(),
         transition: Transition.cupertino
     ),
   ];
