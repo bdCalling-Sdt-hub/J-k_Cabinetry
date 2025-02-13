@@ -27,7 +27,7 @@ class _SignUpViewState extends State<SignUpView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarTitle(),
+      appBar:  const CustomAppBarTitle(isShowText: true,text: 'Registration',),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.w),
         child: SingleChildScrollView(

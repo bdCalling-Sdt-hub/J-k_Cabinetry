@@ -13,6 +13,7 @@ import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/app_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_card.dart';
+import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
 import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
@@ -34,7 +35,7 @@ class _CabinetryViewState extends State<CabinetryView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      bottomNavigationBar: BottomMenu(1),
+      bottomNavigationBar: const BottomMenu(1),
       appBar: CustomAppBarTitle(isShowChat: true,chatOnTap: (){},notificationCount: '40',),
       drawer: const AppDrawer(),
       body: Padding(
@@ -45,7 +46,7 @@ class _CabinetryViewState extends State<CabinetryView> {
             TopBarContactInfo(),
             verticalSpacing(16.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: SearchField(),
             ),
             verticalSpacing(16.h),
@@ -98,6 +99,7 @@ class _CabinetryViewState extends State<CabinetryView> {
           ],
         ),
       ),
+      floatingActionButton: const CustomCartFloatingButton(),
     );
   }
 }

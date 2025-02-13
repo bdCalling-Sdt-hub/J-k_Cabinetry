@@ -26,7 +26,7 @@ class ProfileUpdateView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarTitle(),
+      appBar: const CustomAppBarTitle(isShowText: true,text: 'Profile Update',),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
         child: SingleChildScrollView(
@@ -40,6 +40,7 @@ class ProfileUpdateView extends StatelessWidget {
                     children: [
                       Obx(() => CircleAvatar(
                           radius: 64.r,
+                          backgroundColor: Colors.grey,
                           backgroundImage: _profileUpdateController.profileImagePath.value.isNotEmpty
                               ? FileImage(File(_profileUpdateController.profileImagePath.value)) as ImageProvider
                               :  NetworkImage(AppNetworkImage.golfPlayerImg),

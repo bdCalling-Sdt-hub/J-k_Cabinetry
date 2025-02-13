@@ -9,6 +9,7 @@ import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
+import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
 class CabinetPartsView extends StatefulWidget {
@@ -169,6 +170,7 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
           ),
         ),
       ),
+      floatingActionButton: const CustomCartFloatingButton(),
     );
   }
  void showImageDialog(BuildContext context, int imageIndex) {

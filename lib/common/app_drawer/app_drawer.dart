@@ -81,7 +81,7 @@ class AppDrawer extends StatelessWidget {
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                    Get.toNamed(Routes.CABINET_DETAIL);
+                    Get.toNamed(Routes.CABINETRYSPEC);
                   },
                 ),
                 ExpansionTile(
@@ -93,23 +93,23 @@ class AppDrawer extends StatelessWidget {
                         onTap: () {
                           switch(index){
                             case 0:
-                              Get.offAndToNamed(Routes.SIGN_IN);
+                              Get.toNamed(Routes.COMMITMENTTOQULATITY);
                               break;
 
                               case 1:
-                              Get.offAndToNamed(Routes.CART);
+                              Get.toNamed(Routes.MAINTENANCEANDCARE);
                               break;
 
                               case 2:
-                              Get.offAndToNamed(Routes.CABINETRY);
+                              Get.toNamed(Routes.STANDARDFEATURES);
                               break;
 
                               case 3:
-                              Get.offAndToNamed(Routes.HOME);
+                              Get.toNamed(Routes.CRAFTSMANSHIP);
                               break;
 
                               case 4:
-                              Get.offAndToNamed(Routes.PROFILE);
+                              Get.toNamed(Routes.SUSTAINABILITY);
                               break;
 
                             default:
@@ -159,6 +159,7 @@ class AppDrawer extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                     //ExternalUrlLauncher.lunchUrl(ExternalUrl.termsAndConditionsUrl);
+                    Get.toNamed(Routes.SETTINGS);
                   },
                 ),
                 ListTile(

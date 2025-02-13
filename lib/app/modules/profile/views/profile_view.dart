@@ -20,7 +20,7 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(isShowChat: true,chatOnTap: (){},notificationCount: '40',),
+      appBar:  const CustomAppBarTitle(isShowText: true,text: 'Profile',),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
@@ -34,6 +34,7 @@ class ProfileView extends StatelessWidget {
                   /// Profile Picture with Edit Button
                   CircleAvatar(
                     radius: 60.r,
+                    backgroundColor: Colors.grey,
                     backgroundImage: NetworkImage(AppNetworkImage.golfPlayerImg), // Replace with network image if needed
                   ),
                   horizontalSpacing(14.w),

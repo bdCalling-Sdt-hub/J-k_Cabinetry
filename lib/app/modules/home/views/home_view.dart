@@ -17,6 +17,7 @@ import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_card.dart';
+import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_outlinebutton.dart';
 import 'package:jk_cabinet/common/widgets/custom_search_field.dart';
 import 'package:jk_cabinet/common/widgets/search_field.dart';
@@ -72,7 +73,7 @@ class _HomeViewState extends State<HomeView> {
             verticalSpacing(16.h),
             BannerSection(),
             StepsSection(),
-            VideoSection(youtubePlayerController: _youtubePlayerController!,),
+            VideoSection(youtubePlayerController: _youtubePlayerController,),
             ContactInfo(),
             Divider(height: 2.h, color: Colors.grey.shade400,),
             Padding(
@@ -83,6 +84,7 @@ class _HomeViewState extends State<HomeView> {
           ],
         ),
       ),
+      floatingActionButton: const CustomCartFloatingButton(),
     );
   }
 

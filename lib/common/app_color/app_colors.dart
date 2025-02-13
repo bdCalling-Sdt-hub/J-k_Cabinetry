@@ -5,6 +5,7 @@ class AppColors{
   static const primaryColor= Color(0xFF721011);
   static const Color appGreyColor= Color(0xFFA0A0A0);
   static const Color roseTaupeColor= Color(0xFF9D5859);
+  static const Color floatingButtonColor= Color(0xFF994343);
   static const Color textFieldFillColor= Color(0xFFFFFFFF);
   static const Color bottomNavColor= Color(0xFF0b2651);
   static const Color scheduleCardColor= Color(0xFFD4F9F9);

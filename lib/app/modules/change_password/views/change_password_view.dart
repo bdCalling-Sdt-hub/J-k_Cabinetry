@@ -11,8 +11,10 @@ import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_text_field.dart';
+import 'package:jk_cabinet/common/widgets/show_status_change_pass_item.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 import 'package:jk_cabinet/common/widgets/text_required.dart';
+import 'package:lottie/lottie.dart';
 
 import '../controllers/change_password_controller.dart';
 
@@ -39,7 +41,7 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Spacer(flex: 1,),
+              const Spacer(flex: 1,),
               ///Password
               verticalSpacing(20.h),
               TextRequired(text:AppString.passawordText,
@@ -107,15 +109,33 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                   onTap: () async {
                     if (_formKey.currentState!.validate()) {
                       //await otpController.sendOtp(isResetPassword);
-                      Get.offNamed(Routes.SIGN_IN);
+                      showStatusOnChangePasswordResponse(context);
                     }
                   },
                   text: AppString.confirmText),
-              Spacer(flex: 2,),
+              const Spacer(flex: 2,),
             ],
           ),
         ),
       ),
+    );
+  }
+  void showStatusOnChangePasswordResponse(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      enableDrag: false,
+      isDismissible: false,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0.r)),
+      ),
+      isScrollControlled: true,
+      builder: (context) {
+        return ShowStatusOnChangePassItem(
+          onTap: () {
+            Get.toNamed(Routes.SIGN_IN);
+            },
+        );
+      },
     );
   }
   @override
@@ -125,3 +145,5 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
     super.dispose();
   }
 }
+
+

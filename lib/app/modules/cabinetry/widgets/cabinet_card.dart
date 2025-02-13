@@ -19,6 +19,7 @@ class CabinetCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomCard(
       elevation: 3,
+      borderSideColor: Colors.white,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(

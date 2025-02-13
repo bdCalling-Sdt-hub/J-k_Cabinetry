@@ -18,6 +18,23 @@ abstract class Routes {
   static const CABINET_PARTS_RECENTVIEWED_DETAILS =
       _Paths.CABINET_PARTS_RECENTVIEWED_DETAILS;
   static const CHECKOUT = _Paths.CHECKOUT;
+  static const CASH_PAYMENT_PROCESS = _Paths.CASH_PAYMENT_PROCESS;
+  static const INVOICE = _Paths.INVOICE;
+
+  static const COMMITMENTTOQULATITY = _Paths.COMMITMENTTOQULATITY;
+  static const CRAFTSMANSHIP = _Paths.CRAFTSMANSHIP;
+  static const MAINTENANCEANDCARE = _Paths.MAINTENANCEANDCARE;
+  static const STANDARDFEATURES = _Paths.STANDARDFEATURES;
+  static const SUSTAINABILITY = _Paths.SUSTAINABILITY;
+  static const CABINETRYSPEC = _Paths.CABINETRYSPEC;
+  static const MESSAGE = _Paths.MESSAGE;
+  static const MESSAGE_INBOX = _Paths.MESSAGE_INBOX;
+
+  static const SETTINGS = _Paths.SETTINGS;
+  static const ABOUT = _Paths.ABOUT;
+  static const PRIVAACY_POLICY = _Paths.PRIVAACY_POLICY;
+  static const SUPPORT = _Paths.SUPPORT;
+  static const TERMS_CONDITION = _Paths.TERMS_CONDITION;
 }
 
 abstract class _Paths {
@@ -37,4 +54,21 @@ abstract class _Paths {
   static const CABINET_PARTS_RECENTVIEWED_DETAILS =
       '/cabinet-parts-recentviewed-details';
   static const CHECKOUT = '/checkout';
+  static const CASH_PAYMENT_PROCESS = '/cash-payment-process';
+  static const INVOICE = '/invoice';
+
+  static const COMMITMENTTOQULATITY = '/commitment_to_quality';
+  static const CRAFTSMANSHIP = '/craftsmanship';
+  static const MAINTENANCEANDCARE = '/maintenance_and_care';
+  static const STANDARDFEATURES = '/standard_features';
+  static const SUSTAINABILITY = '/sustainability';
+  static const CABINETRYSPEC = '/cabinetry_spec';
+  static const MESSAGE = '/message';
+  static const MESSAGE_INBOX = '/message_inbox';
+
+  static const SETTINGS = '/settings';
+  static const ABOUT = '/about';
+  static const PRIVAACY_POLICY = '/privacy_policy';
+  static const SUPPORT = '/support';
+  static const TERMS_CONDITION = '/term_condition';
 }

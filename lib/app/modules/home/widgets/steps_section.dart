@@ -2,6 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_common/get_reset.dart';
+import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/widgets/custom_card.dart';
 import 'package:jk_cabinet/common/widgets/custom_outlinebutton.dart';
 
@@ -48,7 +51,7 @@ class StepsSection extends StatelessWidget {
           CustomOutlineButton(
             width: 100.w,
             onTap: () {
-              // Handle button press, for example, navigate to application screen
+              Get.toNamed(Routes.SIGN_UP);
             },
             text: 'Start Application',
           ),
