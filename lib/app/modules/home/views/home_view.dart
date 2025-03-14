@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/modules/bottom_menu/bottom_menu..dart';
@@ -12,20 +10,13 @@ import 'package:jk_cabinet/app/modules/home/widgets/footer.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/video_section.dart';
 import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
-import 'package:jk_cabinet/common/app_images/network_image%20.dart';
-import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
-import 'package:jk_cabinet/common/widgets/custom_card.dart';
 import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
-import 'package:jk_cabinet/common/widgets/custom_outlinebutton.dart';
-import 'package:jk_cabinet/common/widgets/custom_search_field.dart';
 import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
-import '../controllers/home_controller.dart';
 import '../widgets/steps_section.dart';
 
 class HomeView extends StatefulWidget {
@@ -67,7 +58,7 @@ class _HomeViewState extends State<HomeView> {
             TopBarContactInfo(),
             verticalSpacing(16.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
               child: SearchField(),
             ),
             verticalSpacing(16.h),

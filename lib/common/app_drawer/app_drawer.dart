@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:jk_cabinet/app/data/external_url.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
 import 'package:jk_cabinet/common/app_string/app_string.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
+import 'package:jk_cabinet/common/url_luncher/externer_url_luncher.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -158,7 +160,7 @@ class AppDrawer extends StatelessWidget {
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                    //ExternalUrlLauncher.lunchUrl(ExternalUrl.termsAndConditionsUrl);
+                    ExternalUrlLauncher.lunchUrl(ExternalUrl.termsAndConditionsUrl);
                     Get.toNamed(Routes.SETTINGS);
                   },
                 ),
