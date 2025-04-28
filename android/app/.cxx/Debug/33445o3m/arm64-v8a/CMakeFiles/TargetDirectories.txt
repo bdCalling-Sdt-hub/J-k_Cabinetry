@@ -1,0 +1,2 @@
+/Users/quantumalliance/StudioProjects/J-k_Cabinetry/android/app/.cxx/Debug/33445o3m/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/quantumalliance/StudioProjects/J-k_Cabinetry/android/app/.cxx/Debug/33445o3m/arm64-v8a/CMakeFiles/rebuild_cache.dir

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jk_cabinet/app/data/external_url.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
 import 'package:jk_cabinet/common/app_string/app_string.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
+import 'package:jk_cabinet/common/url_luncher/externer_url_luncher.dart';
 import 'package:jk_cabinet/common/widgets/custom_listTile.dart';
 
 class SettingsView extends StatelessWidget {
@@ -67,7 +69,8 @@ class SettingsView extends StatelessWidget {
             title: AppString.termConditionText,
             icon: AppIcons.exclamatoryIcon,
             onTap: () {
-              Get.toNamed(Routes.TERMS_CONDITION);
+              ExternalUrlLauncher.lunchUrl(ExternalUrl.termsAndConditionsUrl);
+              //Get.toNamed(Routes.TERMS_CONDITION);
             },
           ),
 

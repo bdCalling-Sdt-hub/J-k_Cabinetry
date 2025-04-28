@@ -38,6 +38,7 @@ class _CabinetryViewState extends State<CabinetryView> {
       bottomNavigationBar: const BottomMenu(1),
       appBar: CustomAppBarTitle(isShowChat: true,chatOnTap: (){},notificationCount: '40',),
       drawer: const AppDrawer(),
+      resizeToAvoidBottomInset: true,
       body: Padding(
         padding: EdgeInsets.all(12.0.sp),
         child: Column(

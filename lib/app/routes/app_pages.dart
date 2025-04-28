@@ -62,62 +62,62 @@ class AppPages {
         name: _Paths.HOME,
         page: () => const HomeView(),
         binding: HomeBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.SIGN_IN,
         page: () => const SignInView(),
         binding: SignInBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.SIGN_UP,
         page: () => const SignUpView(),
         binding: SignUpBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.OTP,
         page: () => const OtpView(),
         binding: OtpBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.FORGOT_PASSWORD,
         page: () => const ForgotPasswordView(),
         binding: ForgotPasswordBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.CHANGE_PASSWORD,
         page: () => const ChangePasswordView(),
         binding: ChangePasswordBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.PROFILE,
         page: () => ProfileView(),
         binding: ProfileBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.PROFILE_UPDATE,
         page: () => ProfileUpdateView(),
         binding: ProfileUpdateBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.CABINETRY,
         page: () => const CabinetryView(),
         binding: CabinetryBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.CART,
         page: () => CartView(),
         binding: CartBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.CABINET_DETAIL,
         page: () => const CabinetDetailView(),
         binding: CabinetDetailBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
         name: _Paths.CABINET_PARTS,
         page: () => const CabinetPartsView(),
         binding: CabinetPartsBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
       name: _Paths.CABINET_PARTS_RECENTVIEWED_DETAILS,
       page: () => const CabinetPartsRecentViewedDetailsView(),
@@ -127,60 +127,60 @@ class AppPages {
         name: _Paths.CHECKOUT,
         page: () => CheckoutView(),
         binding: CartBinding(),
-        transition: Transition.cupertino),
+        transition: Transition.noTransition),
     GetPage(
       name: _Paths.CASH_PAYMENT_PROCESS,
       page: () => const CashPaymentProcessView(),
       binding: CashPaymentProcessBinding(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.INVOICE,
       page: () =>  InvoiceView(),
       binding: InvoiceBinding(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
 
     GetPage(
       name: _Paths.COMMITMENTTOQULATITY,
       page: () =>  CommitmentToQuality(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.CRAFTSMANSHIP,
       page: () =>  Craftsmanship(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.MAINTENANCEANDCARE,
       page: () =>  MaintenanceAndCare(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.STANDARDFEATURES,
       page: () =>  StandardFeatures(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.SUSTAINABILITY,
       page: () =>  Sustainability(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.CABINETRYSPEC,
       page: () =>  CabinetrySpec(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
 
     GetPage(
       name: _Paths.MESSAGE,
       page: () =>  MessageView(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
     GetPage(
       name: _Paths.MESSAGE_INBOX,
       page: () =>  MessageInboxView(),
-        transition: Transition.cupertino
+        transition: Transition.noTransition
     ),
 
     GetPage(
