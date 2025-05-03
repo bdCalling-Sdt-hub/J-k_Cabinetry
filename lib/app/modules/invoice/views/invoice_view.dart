@@ -1,8 +1,15 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
+import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
+import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
@@ -10,14 +17,45 @@ import 'package:jk_cabinet/common/widgets/app_custom_textOrIcon_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_icon_text_button.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 
-
-
-class InvoiceView extends StatelessWidget {
+class InvoiceView extends StatefulWidget {
    InvoiceView({super.key});
+
+  @override
+  State<InvoiceView> createState() => _InvoiceViewState();
+}
+
+class _InvoiceViewState extends State<InvoiceView> {
+
   final CartController _cartController=Get.find();
+  final HomeController homeController = Get.put(HomeController());
+  BranchData? branchData;
+  String transactionId='';
+
+ @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((__)async{
+      branchData = await homeController.saveBranchInfo();
+      setState(() {});
+      previousPageData();
+      }
+    );
+  }
+
+  previousPageData(){
+   final transId = Get.arguments['transactionId'];
+   setState(() {
+     transactionId = transId;
+   });
+  }
   @override
   Widget build(BuildContext context) {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
     return Scaffold(
         appBar: const CustomAppBarTitle(),
       body: Padding(
@@ -25,23 +63,26 @@ class InvoiceView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopBarContactInfo(),
+            TopBarContactInfo(branchData: branchData),
             SizedBox(height: 10.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 AppCustomTextOrIconButton(text: 'In Progress', onTab: (){},buttonColor: Colors.blue.shade50,isBorderActive: true,borderColors: Colors.blue,textColor: Colors.blue,),
-                CustomIconTextButton(onPressed: (){}, icon:Icons.receipt, label: 'Invoice')
+                CustomIconTextButton(
+                    onPressed: ()async{
+                  await generateShareInvoice();
+                }, icon:Icons.receipt, label: 'Invoice')
               ],
             ),
              SizedBox(height: 16.h),
             Text(
-              'Order ID: 6546132',
+              'Order ID: $transactionId',
               style: AppStyles.h3(fontWeight: FontWeight.bold),
             ),
              SizedBox(height: 5.h),
             Text(
-              'Order date: 12.12.25',
+              'Order date: $formattedDate',
               style:  AppStyles.h5(color: Colors.black54),
             ),
             SizedBox(height: 16.h),
@@ -138,4 +179,133 @@ class InvoiceView extends StatelessWidget {
       ),
     );
   }
+
+  Future<void> generateShareInvoice() async {
+    String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+
+    final pdf = pw.Document();
+    // Load your custom fonts (if needed)
+    final pw.Font customFont = pw.Font.ttf(await rootBundle.load('assets/font/Outfit-Medium.ttf'));
+
+    // Generate the invoice PDF
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        build: (context) => [
+          pw.Text(
+            'Invoice',
+            style: pw.TextStyle(fontSize: 24, font: customFont),
+          ),
+          pw.SizedBox(height: 16.h),
+          pw.Text(
+            'Order ID: $transactionId',
+            style: pw.TextStyle(fontSize: 18, font: customFont),
+          ),
+          pw.SizedBox(height: 5.h),
+          pw.SizedBox(height: 16),
+          pw.Text(
+            'Order date: $formattedDate',
+            style: pw.TextStyle(fontSize: 18, font: customFont),
+          ),
+          pw.SizedBox(height: 16),
+          pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text(
+                'Order Summary',
+                style: pw.TextStyle(fontSize: 20, font: customFont),
+              ),
+              pw.SizedBox(height: 8),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Name', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  pw.Text('Quantity', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  pw.Text('Assembly', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                  pw.Text('Total', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                ],
+              ),
+              pw.Divider(),
+              // Cart Items
+              ...List.generate(_cartController.cartItems.length, (index) {
+                final cartItem = _cartController.cartItems[index];
+                return pw.Padding(
+                  padding: const pw.EdgeInsets.symmetric(vertical: 6),
+                  child: pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text(cartItem.name),
+                      pw.Text(cartItem.quantity.toString()),
+                      pw.Text('\$${cartItem.assemblyCost.toStringAsFixed(2)}'),
+                      pw.Text('\$${cartItem.totalPrice.toStringAsFixed(2)}'),
+                    ],
+                  ),
+                );
+              }),
+              pw.SizedBox(height: 12),
+              pw.Text('Shipping:', style: pw.TextStyle(fontSize: 18, font: customFont)),
+              pw.SizedBox(height: 8),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('By J&K Cabinetry', style: pw.TextStyle(fontSize: 16, font: customFont)),
+                  pw.Text(
+                    '\$${_cartController.isShip.value ? _cartController.shippingCost.toStringAsFixed(2) : '0.00'}',
+                    style: pw.TextStyle(fontSize: 16, font: customFont),
+                  ),
+                ],
+              ),
+              pw.Divider(),
+              pw.SizedBox(height: 10),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Sub-Total :', style: pw.TextStyle(fontSize: 18, font: customFont)),
+                  pw.Text('\$${_cartController.subtotal.value.toStringAsFixed(2)}', style: pw.TextStyle(fontSize: 18, font: customFont)),
+                ],
+              ),
+              pw.SizedBox(height: 14),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Sales Tax (6%) :', style: pw.TextStyle(fontSize: 18, font: customFont)),
+                  pw.Text(
+                    '\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2)}',
+                    style: pw.TextStyle(fontSize: 18, font: customFont),
+                  ),
+                ],
+              ),
+              pw.SizedBox(height: 12),
+            ],
+          ),
+          pw.SizedBox(height: 15),
+          // Total Price Section
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Text('Total :', style: pw.TextStyle(fontSize: 22, font: customFont, color: PdfColors.blue)),
+              pw.Text(
+                '\$${_cartController.inTotal.value.toStringAsFixed(2)}',
+                style: pw.TextStyle(fontSize: 22, font: customFont, color: PdfColors.blue),
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 15),
+        ],
+      ),
+    );
+
+    // Get the temporary directory path
+    final output = await getTemporaryDirectory();
+    final file = XFile.fromData(await pdf.save(), mimeType: 'text/plain');
+    // Save the PDF to the file
+   // await file.writeAsBytes(await pdf.save());
+
+   final fileParams= ShareParams(text: 'Invoice PDF',files:[file],fileNameOverrides: ['my invoice.pdf']);
+   final result = await SharePlus.instance.share(fileParams);
+   if(result.status == ShareResultStatus.success){
+     Get.snackbar('Success', 'Invoice PDF shared successfully');
+   }
+  }
+
 }

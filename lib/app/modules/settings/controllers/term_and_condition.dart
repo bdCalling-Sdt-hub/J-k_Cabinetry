@@ -12,7 +12,7 @@ class TermAndConditionController extends GetxController {
   fetchTermAndCondition() async {
     try {
       isLoading.value=true;
-      var request = http.Request('GET', Uri.parse(ApiConstants.termAndConditionUrl));
+      var request = http.Request('GET', Uri.parse('ApiConstants.termAndConditionUrl'));
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
       final responseData = jsonDecode(responseBody);

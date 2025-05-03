@@ -26,7 +26,7 @@ class SendMessageController extends GetxController {
       'receiverId': receiverId,
     };
 
-    var request =  http.MultipartRequest('POST', Uri.parse(ApiConstants.sendMessageUrl));
+    var request =  http.MultipartRequest('POST', Uri.parse(''));
     request.fields.addAll(body);
 
     File fileData = File(filePath);

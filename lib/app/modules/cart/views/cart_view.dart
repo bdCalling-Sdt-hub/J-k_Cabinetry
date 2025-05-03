@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/modules/bottom_menu/bottom_menu..dart';
+import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
+import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
@@ -24,7 +26,17 @@ class CartView extends StatefulWidget {
 
 class _CartViewState extends State<CartView> {
   final CartController cartController = Get.put(CartController());
-
+  final HomeController homeController = Get.put(HomeController());
+  BranchData? branchData;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((__)async{
+      branchData = await homeController.saveBranchInfo();
+      setState(() {});
+      print(branchData);
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,10 +53,11 @@ class _CartViewState extends State<CartView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopBarContactInfo(),
+              TopBarContactInfo(branchData: branchData,),
               verticalSpacing(12.h),
-              SearchField(),
-              verticalSpacing(8.h),
+              ///search field
+              // SearchField(),
+              // verticalSpacing(8.h),
               const Text(
                 "Final Pricing may differ due to pricing updates, tax, assembly fee, or shipping fees.",
                 style: TextStyle(fontSize: 14, color: Colors.black54),

@@ -1,7 +1,10 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
+import 'package:jk_cabinet/sk_key.dart';
 
 import 'app/routes/app_pages.dart';
 import 'common/app_constant/app_constant.dart';
@@ -16,12 +19,16 @@ String token = '';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey = SKey.sPubTestKey;
   Map<String, Map<String, String>> _languages = await init();
-  runApp(
-    MyApp(
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]).then((_){
+    runApp(MyApp(
       languages: _languages,
-    ),
-  );
+    ));
+  });
   token = await PrefsHelper.getString('token');
 }
 

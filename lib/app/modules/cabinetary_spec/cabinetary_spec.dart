@@ -4,7 +4,7 @@ import 'package:jk_cabinet/common/app_images/app_images.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 
 class CabinetrySpec extends StatelessWidget {
-  const CabinetrySpec({Key? key}) : super(key: key);
+  const CabinetrySpec({super.key});
 
   Widget _buildSectionTitle(String title, {Color color = Colors.red}) {
     return Padding(

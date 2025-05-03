@@ -13,7 +13,7 @@ class AboutUsController extends GetxController {
   fetchAboutUs() async {
     try {
       isLoading.value=true;
-      var request = http.Request('GET', Uri.parse(ApiConstants.aboutUsUrl));
+      var request = http.Request('GET', Uri.parse('ApiConstants.aboutUsUrl'));
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
       final responseData = jsonDecode(responseBody);

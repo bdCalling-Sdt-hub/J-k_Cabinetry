@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/common/widgets/custom_card.dart';
 
 class TopBarContactInfo extends StatelessWidget {
+  final BranchData? branchData;
   const TopBarContactInfo({
-    super.key,
+    super.key, this.branchData,
   });
 
   @override
@@ -16,7 +18,7 @@ class TopBarContactInfo extends StatelessWidget {
         cardColor: Colors.grey.shade300,
         isRow: true,
         children: [
-          const Text(
+           Text(
             "Contact us: ",
             style: TextStyle(
               fontWeight: FontWeight.bold,
@@ -26,16 +28,15 @@ class TopBarContactInfo extends StatelessWidget {
           const SizedBox(width: 6),
           const Icon(Icons.phone, size: 16, color: Colors.black54),
           const SizedBox(width: 4),
-          const Text(
-            "267 994-6606",
-            style: TextStyle(color: Colors.black87),
+           Text("${branchData?.mobile}",
+            style: const TextStyle(color: Colors.black87),
           ),
           const SizedBox(width: 12),
           const Icon(Icons.email, size: 16, color: Colors.black54),
           const SizedBox(width: 4),
-          const Text(
-            "sales@jkcabinetryct.com",
-            style: TextStyle(color: Colors.black87),
+           Text(
+            "${branchData?.email}",
+            style: const TextStyle(color: Colors.black87),
           ),
         ],
       ),

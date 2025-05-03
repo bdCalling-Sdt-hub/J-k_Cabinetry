@@ -12,7 +12,7 @@ class SupportController extends GetxController {
   fetchSupport() async {
     try {
       isLoading.value=true;
-      var request = http.Request('GET', Uri.parse(ApiConstants.supportUrl));
+      var request = http.Request('GET', Uri.parse('ApiConstants.supportUrl'));
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
       final responseData = jsonDecode(responseBody);
