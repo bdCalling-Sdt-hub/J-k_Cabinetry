@@ -10,9 +10,6 @@ class ApiConstants{
 
   static String googleApiKey="AIzaSyBFi80uuJIWkkLCpodFa8oXmD8XD_h8LMc";
 
-
-///>>>>>>>>>>>>>>>>>>>>>>>>>>> Shopper End Point>>>>>>>>>>>>>>>>>>>
-
 ///>>>>>>>>>>>>>>>>>>>>>>>>>>> User Auth>>>>>>>>>>>>>>>>>>>
 
 static String registerUrl= '/auth/register';
@@ -21,9 +18,9 @@ static String emailSendUrl= '$baseUrl/auth/forgot-password';
 static String verifyEmailWithOtpUrl= '/auth/verify-email';
 static String logInUrl= '/auth/login';
 static String resetPasswordUrl= '/auth/reset-password';
+static String resetPasswordNoneUrl= '/auth/reset-password/none';
 static String branchUrl= '$baseUrl/branch/read-branch/open';
 static String cabinetDetailsUrl= '$baseUrl/parts/get-parts-by-categories';
-
 
 static String  cabinetryUrl (String branchId)=> '$baseUrl/cabinetry/read-cabinetry-without-login/$branchId';
 static String  searchNameUrl (String name)=> '$baseUrl/users?fullName=$name';
