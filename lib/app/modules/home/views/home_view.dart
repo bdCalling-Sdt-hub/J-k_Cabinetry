@@ -55,7 +55,7 @@ class _HomeViewState extends State<HomeView> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            TopBarContactInfo(),
+             TopBarContactInfo(),
             verticalSpacing(16.h),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
