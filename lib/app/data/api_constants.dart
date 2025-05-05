@@ -24,5 +24,7 @@ static String cabinetDetailsUrl= '$baseUrl/parts/get-parts-by-categories';
 
 static String  cabinetryUrl (String branchId)=> '$baseUrl/cabinetry/read-cabinetry-without-login/$branchId';
 static String  searchNameUrl (String name)=> '$baseUrl/users?fullName=$name';
+///check
+static String  searchNameaslkjdUrl (String name)=> '$baseUrl/useasdbhmnsars?fullName=$name';
 
 }
