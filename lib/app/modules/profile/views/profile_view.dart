@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:jk_cabinet/app/data/api_constants.dart';
 import 'package:jk_cabinet/app/data/external_url.dart';
 import 'package:jk_cabinet/app/modules/profile/controllers/profile_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
@@ -10,7 +11,10 @@ import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
+import 'package:jk_cabinet/common/widgets/custom_page_loading.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+
+import '../../../../common/widgets/custom_outlinebutton.dart';
 
 class ProfileView extends StatelessWidget {
   final ProfileController _profileController = Get.put(ProfileController());
@@ -20,7 +24,10 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  const CustomAppBarTitle(isShowText: true,text: 'Profile',),
+      appBar: const CustomAppBarTitle(
+        isShowText: true,
+        text: 'Profile',
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 20.h),
@@ -29,24 +36,57 @@ class ProfileView extends StatelessWidget {
             children: [
               SizedBox(height: 20.h),
               Row(
-               // crossAxisAlignment: CrossAxisAlignment.start,
+                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   /// Profile Picture with Edit Button
-                  CircleAvatar(
-                    radius: 60.r,
-                    backgroundColor: Colors.grey,
-                    backgroundImage: NetworkImage(AppNetworkImage.golfPlayerImg), // Replace with network image if needed
-                  ),
+
+
+
+                  Obx((){
+                    if (_profileController.profileModel.value.data != null) {
+                      return CircleAvatar(
+                        radius: 60.r,
+                        backgroundColor: Colors.grey,
+                        backgroundImage: NetworkImage(
+                          ApiConstants.baseUrl+  _profileController.profileModel.value.data!.profileImage!,
+                        ),
+                      );
+                    }
+                    return CircleAvatar(
+                      radius: 60.r,
+                      backgroundColor: Colors.grey,
+                      child: const Icon(Icons.person, size: 20,),
+                    );
+                  }),
                   horizontalSpacing(14.w),
+
                   /// Profile name
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Shuvo Khandaker',style: AppStyles.h3(),),
+                      Obx(
+                            () {
+                          if (_profileController.profileModel.value.data ==
+                              null) {
+                            return Text(
+                              '...',
+                              style: AppStyles.h3(),
+                            );
+                          } else {
+                            return Text(
+                              _profileController
+                                  .profileModel.value.data!.firstName ??
+                                  '',
+                              style: AppStyles.h3(),
+                            );
+                          }
+                        },
+                      ),
                       horizontalSpacing(8.w),
+
                       /// Edit Button
                       ElevatedButton.icon(
-                        onPressed: (){
+                        onPressed: () {
                           Get.toNamed(Routes.PROFILE_UPDATE);
                         },
                         icon: Icon(Icons.edit, size: 16.sp),
@@ -54,8 +94,11 @@ class ProfileView extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryColor,
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 8.h),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.r)),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15.w, vertical: 8.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
                         ),
                       ),
                     ],
@@ -64,25 +107,83 @@ class ProfileView extends StatelessWidget {
               ),
 
               SizedBox(height: 15.h),
+
               /// Profile Information
-              _profileDetail("Company Name", "No Name"),
-              _profileDetail("First Name", "Mahmudur Rahman Talukder"),
-              _profileDetail("Last Name", "Talukder"),
-              _profileDetail("Phone Number", "+880 1770504877"),
-              _profileDetail("Address", "Sylhet, Moulvibazar"),
-              _profileDetail("Address Line 2", "Kulaura"),
-              _profileDetail("State", "Moulvibazar"),
-              _profileDetail("City", "Kulaura"),
-              _profileDetail("Zip Code", "3230"),
+              Obx(
+                      (){
+                    if(_profileController.profileModel.value.data ==null){
 
-              /// Document Verification
-              _verifiedStatus(),
+                      return const CustomPageLoading();
+                    }
 
-              _profileDetail("Sales Rep. Name", "Nill"),
-              _profileDetail("Email", "mahmud.uiuxdesign@gmail.com"),
+                    return  Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _profileDetail(
+                            "Company Name",
+                            _profileController.profileModel.value.data!.companyName
+                                .toString()),
+                        _profileDetail(
+                            "First Name",
+                            _profileController.profileModel.value.data!.firstName
+                                .toString()),
+                        _profileDetail(
+                            "Last Name",
+                            _profileController.profileModel.value.data!.lastName
+                                .toString()),
+                        _profileDetail(
+                            "Phone Number",
+                            _profileController.profileModel.value.data!.phone
+                                .toString()),
+                        _profileDetail(
+                            "Address",
+                            _profileController.profileModel.value.data!.address
+                                .toString()),
+                        _profileDetail(
+                            "Address Line 2",
+                            _profileController.profileModel.value.data!.addressLine2
+                                .toString()),
+                        _profileDetail(
+                            "State",
+                            _profileController.profileModel.value.data!.state
+                                .toString()),
+                        _profileDetail(
+                            "City",
+                            _profileController.profileModel.value.data!.city
+                                .toString()),
+                        _profileDetail(
+                            "Zip Code",
+                            _profileController.profileModel.value.data!.zipCode
+                                .toString()),
+
+                        /// Document Verification
+                        _verifiedStatus(),
+
+                        _profileDetail(
+                            "Sales Rep. Name",
+                            _profileController
+                                .profileModel.value.data!.salesRepresentativeName
+                                .toString()),
+                        _profileDetail(
+                            "Email",
+                            _profileController.profileModel.value.data!.email
+                                .toString()),
+                      ],
+                    );
+
+                  }
+
+              ),
 
               SizedBox(height: 20.h),
 
+              // Reset password button
+              CustomOutlineButton(
+                onTap: () {
+                  Get.toNamed(Routes.FORGOT_PASSWORD);
+                },
+                text: "Change Password",
+              ),
             ],
           ),
         ),

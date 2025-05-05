@@ -28,6 +28,7 @@ class _OtpViewState extends State<OtpView> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   int _start = 59; // 3 min
   Timer _timer = Timer(const Duration(seconds: 1), () {});
+  final String email = Get.arguments['email'] ?? '';
 
   startTimer() {
     print("Start $_start");
@@ -60,16 +61,17 @@ class _OtpViewState extends State<OtpView> {
   void initState() {
     super.initState();
     startTimer();
-    if(Get.arguments !=null && Get.arguments['isResetPass'] != null){
+    if (Get.arguments != null && Get.arguments['isResetPass'] != null) {
       resetPassConfirmation();
     }
   }
- resetPassConfirmation(){
-  bool resetPass =  Get.arguments['isResetPass'] as bool;
-  if(resetPass == true){
-    isResetPassword = resetPass;
+
+  resetPassConfirmation() {
+    bool resetPass = Get.arguments['isResetPass'] as bool;
+    if (resetPass == true) {
+      isResetPassword = resetPass;
+    }
   }
- }
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +86,7 @@ class _OtpViewState extends State<OtpView> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 SizedBox(height: 55.h),
-                buildOtpSupportText(email:'Shuvo.office52@gmail.com'),
+                buildOtpSupportText(email: email),
                 SizedBox(height: 30.h),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -130,60 +132,57 @@ class _OtpViewState extends State<OtpView> {
 
                     SizedBox(height: 20.h),
 
-                    ///======Action Button======
-                    Obx(() {
-                      return CustomButton(
-                          loading: otpController.verifyLoading.value,
+                    ///======Confirm Button======
+                    Obx(
+                          () {
+                        return CustomButton(
+                          loading: otpController.isLoading.value,
                           onTap: () async {
-                            if(isResetPassword){
-                              Get.toNamed(Routes.CHANGE_PASSWORD,/*arguments: {'email': Get.arguments['email']}*/);
-                            }else{
-                              Get.toNamed(Routes.SIGN_IN);
-                            }
-
                             if (_formKey.currentState!.validate()) {
-                              //await otpController.sendOtp(isResetPassword);
+                              otpController.sendOtp();
                             }
                           },
-                          text: AppString.confirmText);
-                    }),
+                          text: AppString.confirmText,
+                        );
+                      },
+                    ),
 
                     SizedBox(height: 20.h),
 
                     /// Resent Button
                     timerText == "00:00"
                         ? InkWell(
-                            onTap: () {
-                              resendOtpController.sendMail(false);
-                              _start = 150;
-                              startTimer();
-                              setState(() {});
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Didn’t receive code? ",
-                                  style: AppStyles.customSize(
-                                    size: 14,
-                                    family: "Schuyler",
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.black,
-                                  ),
-                                ),
-                                Text(
-                                  "Resend it",
-                                  style: AppStyles.customSize(
-                                    size: 15,
-                                    family: "Schuyler",
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.blueAccent,
-                                  ),
-                                ),
-                              ],
+                      onTap: () {
+                        resendOtpController.sendMail(false);
+                        _start = 150;
+                        startTimer();
+                        setState(() {});
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Didn’t receive code? ",
+                            style: AppStyles.customSize(
+                              size: 14,
+                              family: "Schuyler",
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.black,
                             ),
-                          )
+                          ),
+                          Text(
+                            "Resend it",
+                            style: AppStyles.customSize(
+                              size: 15,
+                              family: "Schuyler",
+                              fontWeight: FontWeight.w500,
+                              color: Colors.blueAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
                         : const SizedBox(),
                   ],
                 ),
@@ -212,10 +211,19 @@ class _OtpViewState extends State<OtpView> {
           ),
           const TextSpan(
             text:
-                ". If you don't see the email in your inbox, check your spam folder. Email codes can take up to 1-2 minutes to arrive :",
+            ". If you don't see the email in your inbox, check your spam folder. Email codes can take up to 1-2 minutes to arrive :",
           ),
         ],
       ),
     );
   }
+
+
+  @override
+  void dispose() {
+    otpController.otpCtrl.clear();
+    super.dispose();
+  }
+
+
 }

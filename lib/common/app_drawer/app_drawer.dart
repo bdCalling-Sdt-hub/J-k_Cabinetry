@@ -4,9 +4,11 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/external_url.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
+import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
 import 'package:jk_cabinet/common/app_string/app_string.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
+import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:jk_cabinet/common/url_luncher/externer_url_luncher.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -44,143 +46,161 @@ class AppDrawer extends StatelessWidget {
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 14.w),
-              child: Wrap(runSpacing: 2, children: [
-                ListTile(
-                  title: Text(
-                    'Login',
-                    style: AppStyles.h3(),
-                  ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.SIGN_IN);
-                  },
-                ),
-                ListTile(
-                  title: Text('Home',
-                    style: AppStyles.h3(),
-                  ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.HOME);
-                  },
-                ),
-                ListTile(
-                  title: Text('Shop Cabinet Lines',
-                    style: AppStyles.h3(),
-                  ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.CABINETRY);
-                  },
-                ),
-                ListTile(
-                  title: Text('Cabinetry Specs',
-                    style: AppStyles.h3(),
-                  ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.CABINETRYSPEC);
-                  },
-                ),
-                ExpansionTile(
-                  expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                    title: Text('Our quality',style:  AppStyles.h4(fontWeight: FontWeight.bold),),
-                  children: List.generate(
-                    qualityList.length, (index) {
-                      return InkWell(
-                        onTap: () {
-                          switch(index){
-                            case 0:
-                              Get.toNamed(Routes.COMMITMENTTOQULATITY);
-                              break;
-
-                              case 1:
-                              Get.toNamed(Routes.MAINTENANCEANDCARE);
-                              break;
-
-                              case 2:
-                              Get.toNamed(Routes.STANDARDFEATURES);
-                              break;
-
-                              case 3:
-                              Get.toNamed(Routes.CRAFTSMANSHIP);
-                              break;
-
-                              case 4:
-                              Get.toNamed(Routes.SUSTAINABILITY);
-                              break;
-
-                            default:
-                              print("Invalid selection");
-                              break;
-
-                          }
-                        },
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.h),
-                          child: Text(qualityList[index],
-                            style: AppStyles.h5(fontWeight: FontWeight.w400),
-                          ),
-                        ),
-                      );
+              child: Wrap(
+                runSpacing: 2,
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Login',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.SIGN_IN);
                     },
                   ),
-                ),
+                  ListTile(
+                    title: Text(
+                      'Home',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.HOME);
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Shop Cabinet Lines',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.CABINETRY);
+                    },
+                  ),
+                  ListTile(
+                    title: Text(
+                      'Cabinetry Specs',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.CABINETRYSPEC);
+                    },
+                  ),
+                  ExpansionTile(
+                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                    title: Text(
+                      'Our quality',
+                      style: AppStyles.h4(fontWeight: FontWeight.bold),
+                    ),
+                    children: List.generate(
+                      qualityList.length,
+                          (index) {
+                        return InkWell(
+                          onTap: () {
+                            switch (index) {
+                              case 0:
+                                Get.toNamed(Routes.COMMITMENTTOQULATITY);
+                                break;
 
-                ListTile(
-                  title: Text(
-                    'Registration',
-                    style: AppStyles.h3(),
+                              case 1:
+                                Get.toNamed(Routes.MAINTENANCEANDCARE);
+                                break;
+
+                              case 2:
+                                Get.toNamed(Routes.STANDARDFEATURES);
+                                break;
+
+                              case 3:
+                                Get.toNamed(Routes.CRAFTSMANSHIP);
+                                break;
+
+                              case 4:
+                                Get.toNamed(Routes.SUSTAINABILITY);
+                                break;
+
+                              default:
+                                print("Invalid selection");
+                                break;
+                            }
+                          },
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.h),
+                            child: Text(
+                              qualityList[index],
+                              style: AppStyles.h5(fontWeight: FontWeight.w400),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.SIGN_UP);
-                  },
-                ),
-                ListTile(
-                  title: Text('Cart',
-                    style: AppStyles.h3(),
+                  ListTile(
+                    title: Text(
+                      'Registration',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.SIGN_UP);
+                    },
                   ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.CART);
-                  },
-                ),
-                ListTile(
-                  title: Text(
-                    'Settings',
-                    style: AppStyles.h3(),
+                  ListTile(
+                    title: Text(
+                      'Cart',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      Get.toNamed(Routes.CART);
+                    },
                   ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.SETTINGS);
-                  },
-                ),
-                ListTile(
-                  title: Text(
-                    AppString.signOutText,
-                    style: AppStyles.h3(color: Colors.redAccent),
+                  ListTile(
+                    title: Text(
+                      'Settings',
+                      style: AppStyles.h3(),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () {
+                      Navigator.pop(context);
+                      ExternalUrlLauncher.lunchUrl(
+                          ExternalUrl.termsAndConditionsUrl);
+                      Get.toNamed(Routes.SETTINGS);
+                    },
                   ),
-                  leading: SvgPicture.asset(
-                    AppIcons.logOutIcon,
-                    height: 32.h,
-                    colorFilter: const ColorFilter.mode(
-                        Colors.redAccent, BlendMode.srcIn),
+
+                  // sign out
+                  ListTile(
+                    title: Text(
+                      AppString.signOutText,
+                      style: AppStyles.h3(color: Colors.redAccent),
+                    ),
+
+                    leading: SvgPicture.asset(
+                      AppIcons.logOutIcon,
+                      height: 32.h,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.redAccent,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                    horizontalTitleGap: 20.w,
+                    onTap: () async {
+                      await PrefsHelper.remove(AppConstants.signInToken);
+                      await PrefsHelper.remove(AppConstants.userId);
+                      Get.toNamed(Routes.SIGN_IN);
+                    },
                   ),
-                  horizontalTitleGap: 20.w,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Get.toNamed(Routes.HOME);
-                  },
-                ),
-              ]),
+                ],
+              ),
             ),
             SizedBox(
               height: 80.h,

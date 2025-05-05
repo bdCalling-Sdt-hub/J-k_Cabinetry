@@ -1,10 +1,14 @@
 
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PrefsHelper {
 
   static Future<String> getString(String key) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    Logger logger=Logger();
+    logger.d("token get with key=$key ");
+    logger.d(preferences.getString(key));
     return preferences.getString(key) ?? "";
   }
 
@@ -16,6 +20,8 @@ class PrefsHelper {
 
   static Future setString(String key, value) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    Logger logger=Logger();
+    logger.d("token SAved with key=$key & value =$value ");
     await preferences.setString(key, value);
   }
 

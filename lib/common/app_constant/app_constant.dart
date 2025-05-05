@@ -1,14 +1,14 @@
-
-
 import 'package:jk_cabinet/common/model/language_model.dart';
 
 class AppConstants {
 
+  static const String signInToken = 'sign-in-token';
+  static const String userId = 'user-id';
 
   static const token = 'token';
   static const company = 'company';
   static const tempId = 'tempId';
-  static const userId = 'userId';
+  //static const userId = 'userId';
   static const resetPasswordToken = 'resetPasswordToken';
 
 
@@ -19,7 +19,7 @@ class AppConstants {
 
   static String APP_NAME="Golf Game";
   static String bearerToken="bearerToken";
-  static String userID="userID";
+  //static String userID="userID";
 
 
   // share preference Key

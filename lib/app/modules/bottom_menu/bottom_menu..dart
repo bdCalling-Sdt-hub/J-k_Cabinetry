@@ -5,12 +5,15 @@ import 'package:get/get.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
+import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 
 class BottomMenu extends StatefulWidget {
   final int menuIndex;
   final String? chooseMentorOrMentee;
   final GlobalKey<ScaffoldState>? scaffoldKey;
-  const BottomMenu(this.menuIndex, {super.key, this.chooseMentorOrMentee, this.scaffoldKey});
+
+  const BottomMenu(this.menuIndex,
+      {super.key, this.chooseMentorOrMentee, this.scaffoldKey});
 
   @override
   _BottomMenuState createState() => _BottomMenuState();
@@ -25,8 +28,7 @@ class _BottomMenuState extends State<BottomMenu> {
     _selectedIndex = widget.menuIndex; // Set initial index
   }
 
-  void _onItemTapped(int index) {
-
+  Future<void> _onItemTapped(int index) async {
     if (_selectedIndex == index) {
       // Prevent unnecessary re-navigation to the same screen
       return;
@@ -38,7 +40,7 @@ class _BottomMenuState extends State<BottomMenu> {
     // Navigate to corresponding pages
     switch (index) {
       case 0:
-        Get.offAllNamed(Routes.HOME);
+        Get.offAndToNamed(Routes.HOME);
         break;
       case 1:
         Get.offAndToNamed(Routes.CABINETRY);
@@ -47,8 +49,14 @@ class _BottomMenuState extends State<BottomMenu> {
         Get.offAndToNamed(Routes.CART);
         break;
       case 3:
-        Get.offAndToNamed(Routes.SIGN_IN);
-       // widget.scaffoldKey?.currentState!.openDrawer();
+        final token = await PrefsHelper.getString('sign-in-token');
+        if (token.isNotEmpty) {
+          Get.toNamed(Routes.PROFILE);
+        } else {
+          Get.offAndToNamed(Routes.SIGN_IN);
+        }
+        //Get.offAndToNamed(Routes.SIGN_IN);
+        // widget.scaffoldKey?.currentState!.openDrawer();
         break;
     }
   }
@@ -56,29 +64,32 @@ class _BottomMenuState extends State<BottomMenu> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 80.h,
+      height: 87.h,
       child: ClipRRect(
         //borderRadius:BorderRadius.only(topLeft: Radius.circular(40.r),topRight: Radius.circular(40.r) ),
         child: BottomNavigationBar(
-            currentIndex: _selectedIndex, // Set the selected index
-            onTap: _onItemTapped, // Handle taps on items
-            type: BottomNavigationBarType.fixed, // Prevents shifting behavior
-            backgroundColor: AppColors.primaryColor,
-            selectedItemColor: AppColors.white,
-            showSelectedLabels: true,
-            unselectedItemColor: Colors.white, // Inactive item color
-            selectedFontSize: 12.0,
-            unselectedFontSize: 12.0,
-            items: [
-              _buildBottomNavItem(AppIcons.home2Icon, 'Home'),
-              _buildBottomNavItem(AppIcons.cabinetryIcon, 'Cabinetry'),
-              _buildBottomNavItem(AppIcons.shoppingCartIcon, 'Cart'),
-              _buildBottomNavItem(AppIcons.profileBoxIcon, 'Profile'),
-            ],
-          ),
+          currentIndex: _selectedIndex,
+          // Set the selected index
+          onTap: _onItemTapped,
+          // Handle taps on items
+          type: BottomNavigationBarType.fixed,
+          // Prevents shifting behavior
+          backgroundColor: AppColors.primaryColor,
+          selectedItemColor: AppColors.white,
+          showSelectedLabels: true,
+          unselectedItemColor: Colors.white,
+          // Inactive item color
+          selectedFontSize: 12.0,
+          unselectedFontSize: 12.0,
+          items: [
+            _buildBottomNavItem(AppIcons.home2Icon, 'Home'),
+            _buildBottomNavItem(AppIcons.cabinetryIcon, 'Cabinetry'),
+            _buildBottomNavItem(AppIcons.shoppingCartIcon, 'Cart'),
+            _buildBottomNavItem(AppIcons.profileBoxIcon, 'Profile'),
+          ],
+        ),
       ),
     );
-
   }
 
   BottomNavigationBarItem _buildBottomNavItem(String iconPath, String label) {
@@ -92,15 +103,16 @@ class _BottomMenuState extends State<BottomMenu> {
       activeIcon: Container(
         width: 60.w,
         decoration: BoxDecoration(
-            color: Colors.teal[50],
-          borderRadius: BorderRadius.circular(30.r)
+          color: Colors.teal[50],
+          borderRadius: BorderRadius.circular(30.r),
         ),
         child: SvgPicture.asset(
           iconPath,
           height: 30.0.h,
           width: 30.0.w,
-          colorFilter: const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
-           // Active icon color
+          colorFilter:
+          const ColorFilter.mode(AppColors.primaryColor, BlendMode.srcIn),
+          // Active icon color
         ),
       ),
       label: label,

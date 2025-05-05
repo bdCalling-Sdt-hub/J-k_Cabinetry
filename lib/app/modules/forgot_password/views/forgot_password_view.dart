@@ -23,7 +23,7 @@ class ForgotPasswordView extends StatefulWidget {
 
 class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   final ForgotPasswordController _forgotPasswordController =
-      Get.put(ForgotPasswordController());
+  Get.put(ForgotPasswordController());
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
@@ -33,72 +33,94 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       body: Center(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 10.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(flex: 4,),
-              Align(
-                alignment: Alignment.center,
-                child: Text(
-                  AppString.toEnterYourMailToResetPassText,
-                  textAlign: TextAlign.center,
-                  style: AppStyles.h4(color: AppColors.gray),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(
+                  flex: 4,
                 ),
-              ),
-              const Spacer(flex: 1,),
-              ///Email
-              verticalSpacing(10.h),
-              TextRequired(
-                text: AppString.emailText,
-                textStyle: AppStyles.h4(family: "Schuyler"),
-              ),
-              verticalSpacing(10.h),
-              CustomTextField(
-                prefixIcon: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8.w),
-                  child: const Icon(
-                    Icons.mail,
-                    color: AppColors.appGreyColor,
-                    size: 20,
+                Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    AppString.toEnterYourMailToResetPassText,
+                    textAlign: TextAlign.center,
+                    style: AppStyles.h4(color: AppColors.gray),
                   ),
                 ),
-                filColor: AppColors.textFieldFillColor,
-                isEmail: true,
-                keyboardType: TextInputType.emailAddress,
-                contentPaddingVertical: 20.h,
-                hintText: "Type your email",
-                labelTextStyle:
-                    const TextStyle(color: AppColors.primaryColor),
-                controller: _forgotPasswordController.emailCtrl,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Enter your email';
-                  }
-                  return null;
-                },
-              ),
+                const Spacer(
+                  flex: 1,
+                ),
 
-              /// Action button
-              verticalSpacing(30.h),
-              Obx(() {
-                return CustomButton(
-                  loading: _forgotPasswordController.isLoading.value,
-                  onTap: () async {
-                    Get.toNamed(Routes.OTP,arguments: {'isResetPass':true});
-                    if (_formKey.currentState!.validate()) {
-                      //await _verifyEmailController.sendMail(isResetPassword);
+                ///Email
+                verticalSpacing(10.h),
+                TextRequired(
+                  text: AppString.emailText,
+                  textStyle: AppStyles.h4(family: "Schuyler"),
+                ),
+                verticalSpacing(10.h),
+
+                /// Input Email text field
+                CustomTextField(
+                  prefixIcon: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: const Icon(
+                      Icons.mail,
+                      color: AppColors.appGreyColor,
+                      size: 20,
+                    ),
+                  ),
+                  filColor: AppColors.textFieldFillColor,
+                  isEmail: true,
+                  keyboardType: TextInputType.emailAddress,
+                  contentPaddingVertical: 20.h,
+                  hintText: "Type your email",
+                  labelTextStyle:
+                  const TextStyle(color: AppColors.primaryColor),
+                  controller: _forgotPasswordController.emailCtrl,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Enter your email';
                     }
+                    return null;
                   },
-                  text: AppString.nextText,
-                  // Disable button if loading
-                );
-              }),
-              const Spacer(flex: 8,),
-            ],
+                ),
+
+                /// Action button
+                verticalSpacing(30.h),
+                Obx(
+                      () {
+                    return CustomButton(
+                      loading: _forgotPasswordController.isLoading.value,
+                      onTap: () async {
+                        if (_formKey.currentState!.validate()) {
+                          _forgotPasswordController.sendMail();
+                          //await _verifyEmailController.sendMail(isResetPassword);
+                        }
+                      },
+                      text: AppString.nextText,
+                      // Disable button if loading
+                    );
+                  },
+                ),
+                const Spacer(
+                  flex: 8,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    _forgotPasswordController.emailCtrl.clear();
+    _forgotPasswordController.emailCtrl.clear();
   }
 }

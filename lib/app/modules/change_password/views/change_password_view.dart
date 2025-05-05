@@ -18,17 +18,20 @@ import 'package:lottie/lottie.dart';
 
 import '../controllers/change_password_controller.dart';
 
-class ChangePasswordView extends StatefulWidget{
-   const ChangePasswordView({super.key});
+class ChangePasswordView extends StatefulWidget {
+  const ChangePasswordView({super.key});
 
   @override
   State<ChangePasswordView> createState() => _ChangePasswordViewState();
 }
 
 class _ChangePasswordViewState extends State<ChangePasswordView> {
-  final ChangePasswordController _changePasswordController=Get.put(ChangePasswordController());
+  final ChangePasswordController _changePasswordController =
+  Get.put(ChangePasswordController());
 
-   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final email = Get.arguments['email'];
+
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -41,10 +44,14 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Spacer(flex: 1,),
+              const Spacer(
+                flex: 1,
+              ),
+
               ///Password
               verticalSpacing(20.h),
-              TextRequired(text:AppString.passawordText,
+              TextRequired(
+                text: AppString.passawordText,
                 textStyle: AppStyles.h4(family: "Schuyler"),
               ),
               verticalSpacing(10.h),
@@ -52,13 +59,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                 filColor: AppColors.textFieldFillColor,
                 suffixIconColor: AppColors.appGreyColor,
                 prefixIcon: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: SvgPicture.asset(AppIcons.lockIcon),
                 ),
                 contentPaddingVertical: 20.h,
                 hintText: "Type a password",
-                labelTextStyle:
-                const TextStyle(color: AppColors.primaryColor),
+                labelTextStyle: const TextStyle(color: AppColors.primaryColor),
                 isObscureText: true,
                 obscure: '*',
                 isPassword: true,
@@ -73,7 +79,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
 
               ///Confirm-Password
               SizedBox(height: 20.h),
-              TextRequired(text:AppString.confirmPasswordText,
+              TextRequired(
+                text: AppString.confirmPasswordText,
                 textStyle: AppStyles.h4(family: "Schuyler"),
               ),
               verticalSpacing(10.h),
@@ -81,13 +88,12 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                 filColor: AppColors.textFieldFillColor,
                 suffixIconColor: AppColors.appGreyColor,
                 prefixIcon: Padding(
-                  padding:  EdgeInsets.symmetric(horizontal: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w),
                   child: SvgPicture.asset(AppIcons.lockIcon),
                 ),
                 contentPaddingVertical: 20.h,
                 hintText: "Re-type your password",
-                labelTextStyle:
-                const TextStyle(color: AppColors.primaryColor),
+                labelTextStyle: const TextStyle(color: AppColors.primaryColor),
                 isObscureText: true,
                 obscure: '*',
                 isPassword: true,
@@ -95,7 +101,8 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Re-type your password';
-                  }else if(_changePasswordController.newPassCtrl.text != value){
+                  } else if (_changePasswordController.newPassCtrl.text !=
+                      value) {
                     return "Password don't matched";
                   }
                   return null;
@@ -103,28 +110,32 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
               ),
               SizedBox(height: 20.h),
 
-              /// Action button
+              /// Confirm button
               verticalSpacing(30.h),
               CustomButton(
-                  onTap: () async {
-                    if (_formKey.currentState!.validate()) {
-                      //await otpController.sendOtp(isResetPassword);
-                      showStatusOnChangePasswordResponse(context);
-                    }
-                  },
-                  text: AppString.confirmText),
-              const Spacer(flex: 2,),
+                onTap: () async {
+                  if (_formKey.currentState!.validate()) {
+                    await _changePasswordController.resetPassword();
+                    showStatusOnChangePasswordResponse(context);
+                  }
+                },
+                text: AppString.confirmText,
+              ),
+              const Spacer(
+                flex: 2,
+              ),
             ],
           ),
         ),
       ),
     );
   }
+
   void showStatusOnChangePasswordResponse(BuildContext context) {
     showModalBottomSheet(
       context: context,
       enableDrag: false,
-      isDismissible: false,
+      isDismissible: true,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25.0.r)),
       ),
@@ -133,17 +144,18 @@ class _ChangePasswordViewState extends State<ChangePasswordView> {
         return ShowStatusOnChangePassItem(
           onTap: () {
             Get.toNamed(Routes.SIGN_IN);
-            },
+          },
         );
       },
     );
   }
+
   @override
   void dispose() {
     _changePasswordController.newPassCtrl.clear();
     _changePasswordController.confirmPassCtrl.clear();
+    _changePasswordController.newPassCtrl.dispose();
+    _changePasswordController.confirmPassCtrl.dispose();
     super.dispose();
   }
 }
-
-
