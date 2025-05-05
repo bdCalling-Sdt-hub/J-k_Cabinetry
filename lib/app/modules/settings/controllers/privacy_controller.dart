@@ -12,7 +12,7 @@ class PrivacyController extends GetxController {
   fetchPrivacy() async {
     try {
       isLoading.value=true;
-      var request = http.Request('GET', Uri.parse(ApiConstants.privacyPolicyUrl));
+      var request = http.Request('GET', Uri.parse('ApiConstants.privacyPolicyUrl'));
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
       final responseData = jsonDecode(responseBody);

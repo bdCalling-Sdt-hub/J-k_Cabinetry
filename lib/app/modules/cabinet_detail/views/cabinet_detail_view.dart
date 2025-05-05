@@ -1,12 +1,12 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:jk_cabinet/app/modules/cabinet_detail/controllers/cabinet_detail_controller.dart';
 import 'package:jk_cabinet/app/modules/cabinet_detail/widgets/cabinet_description.dart';
 import 'package:jk_cabinet/app/modules/cabinet_detail/widgets/qtyadd_product_card.dart';
+import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
+import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
@@ -30,6 +30,7 @@ class CabinetDetailView extends StatefulWidget {
 
 class _CabinetDetailsViewState extends State<CabinetDetailView> {
   final CabinetDetailController _cabinetDetailController=Get.put(CabinetDetailController());
+  final HomeController homeController = Get.put(HomeController());
   final List<Map<String, String>> cabinetDetails = [
     {
       'title': 'Bases & Drawers Cabinets',
@@ -61,6 +62,17 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
     },
   ];
 
+  BranchData? branchData;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((__)async{
+      branchData = await homeController.saveBranchInfo();
+      await _cabinetDetailController.fetchCabinetDetails();
+      setState(() {});
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,12 +85,12 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopBarContactInfo(),
+              TopBarContactInfo(branchData: branchData,),
               verticalSpacing(16.h),
               Column(
                 children: [
-                  SearchField(),
-                  verticalSpacing(12.h),
+                  // SearchField(),
+                  // verticalSpacing(12.h),
                   Text(
                     'S8 White',
                     style: AppStyles.h2(color: AppColors.roseTaupeColor,fontWeight: FontWeight.bold),
@@ -100,23 +112,28 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
               const CabinetDescription(title: 'Certifications', description: 'KCMA Certified and CARB2 Compliant.'),
               const CabinetDescription(title: 'Build Quality', description: 'All Solid Wood Construction and Environment Friendly.'),
               SizedBox(height: 15.h),
-              ...List.generate(cabinetDetails.length, (index){
-                 return Card(
-                  color: Colors.grey.shade300,
-                  child: ExpansionTile(
-                    maintainState: true,
-                    title: Text(
-                      cabinetDetails[index]['title']!,
-                      style: AppStyles.h4(fontWeight: FontWeight.bold),
-                    ),
-                    children: [
-                      const HeaderTitleBar(title: 'Contemporary',),
-                      QtyAddProductCard(cabinetDetailController: _cabinetDetailController,index: index,itemLength: cabinetDetails.length,),
+              Column(
+                children: [
+                  ...List.generate(cabinetDetails.length, (index){
+                    return Card(
+                      color: Colors.grey.shade300,
+                      child: ExpansionTile(
+                        maintainState: true,
+                        title: Text(
+                          cabinetDetails[index]['title']!,
+                          style: AppStyles.h4(fontWeight: FontWeight.bold),
+                        ),
+                        children: [
+                          const HeaderTitleBar(title: 'Contemporary',),
+                          QtyAddProductCard(cabinetDetailController: _cabinetDetailController,index: index,itemLength: cabinetDetails.length,),
 
-                    ],
-                  ),
-                );
-              }),
+                        ],
+                      ),
+                    );
+                  }),
+                ],
+              )
+
             ],
           ),
         ),

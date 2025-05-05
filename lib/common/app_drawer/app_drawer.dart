@@ -160,7 +160,6 @@ class AppDrawer extends StatelessWidget {
                   horizontalTitleGap: 20.w,
                   onTap: () {
                     Navigator.pop(context);
-                    ExternalUrlLauncher.lunchUrl(ExternalUrl.termsAndConditionsUrl);
                     Get.toNamed(Routes.SETTINGS);
                   },
                 ),

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 
 class ContactInfo extends StatelessWidget {
-  const ContactInfo({super.key});
+  final BranchData branchData;
+  const ContactInfo({super.key, required this.branchData});
 
   @override
   Widget build(BuildContext context) {
@@ -11,9 +13,12 @@ class ContactInfo extends StatelessWidget {
       child: Column(
         children: [
           Text("Contact Us",style: AppStyles.h2(),),
-          Text("325 Sub way Milford, CT 06461 United States"),
-          Text("267 994-6066"),
-          Text("sales@jkcabinetryct.com"),
+          ///address
+          Text("${branchData.address}"),
+          ///mobile
+          Text("${branchData.mobile}"),
+          ///Email
+          Text("${branchData.email}"),
         ],
       ),
     );

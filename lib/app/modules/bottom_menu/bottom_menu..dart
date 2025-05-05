@@ -38,7 +38,7 @@ class _BottomMenuState extends State<BottomMenu> {
     // Navigate to corresponding pages
     switch (index) {
       case 0:
-        Get.offAndToNamed(Routes.HOME);
+        Get.offAllNamed(Routes.HOME);
         break;
       case 1:
         Get.offAndToNamed(Routes.CABINETRY);
