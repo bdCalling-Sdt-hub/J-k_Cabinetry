@@ -11,7 +11,7 @@ import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:http/http.dart' as http;
 
 class PaymentController extends GetxController{
-
+//
   Map<String, dynamic>? paymentIntent;
   Rx<bool> isLoading= false.obs;
   Future<void> makePayment(
