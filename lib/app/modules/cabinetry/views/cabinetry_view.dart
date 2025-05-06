@@ -23,7 +23,7 @@ import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
 class CabinetryView extends StatefulWidget {
-   const CabinetryView({super.key});
+  const CabinetryView({super.key});
 
   @override
   State<CabinetryView> createState() => _CabinetryViewState();
@@ -31,26 +31,32 @@ class CabinetryView extends StatefulWidget {
 
 class _CabinetryViewState extends State<CabinetryView> {
   final HomeController homeController = Get.put(HomeController());
-  final CabinetryController cabinetryController=Get.put(CabinetryController());
+  final CabinetryController cabinetryController =
+      Get.put(CabinetryController());
 
-  final List<Map<String, String>> cabinetItems =  [
+  final List<Map<String, String>> cabinetItems = [
     {"image": AppNetworkImage.cabinet1Img, "price": "\$8", "color": "White"},
-    {"image": AppNetworkImage.cabinet2Img, "price": "\$5", "color": "Castle Grey"},
+    {
+      "image": AppNetworkImage.cabinet2Img,
+      "price": "\$5",
+      "color": "Castle Grey"
+    },
     {"image": AppNetworkImage.cabinet3Img, "price": "\$8", "color": "White"},
     {"image": AppNetworkImage.cabinet4Img, "price": "\$8", "color": "White"},
   ];
 
-   BranchData? branchData;
- @override
+  BranchData? branchData;
+
+  @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((__)async{
-     branchData = await homeController.saveBranchInfo();
-     setState(() {});
-     print(branchData);
-     if(branchData?.sId!= null){
-      await cabinetryController.fetchCabinetry(branchData?.sId??'');
-     }
+    WidgetsBinding.instance.addPostFrameCallback((__) async {
+      branchData = await homeController.saveBranchInfo();
+      setState(() {});
+      print(branchData);
+      if (branchData?.sId != null) {
+        await cabinetryController.fetchCabinetry(branchData?.sId ?? '');
+      }
     });
   }
 
@@ -58,7 +64,11 @@ class _CabinetryViewState extends State<CabinetryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomMenu(1),
-      appBar: CustomAppBarTitle(isShowChat: true,chatOnTap: (){},notificationCount: '40',),
+      appBar: CustomAppBarTitle(
+        isShowChat: true,
+        chatOnTap: () {},
+        notificationCount: '40',
+      ),
       drawer: const AppDrawer(),
       resizeToAvoidBottomInset: true,
       body: Padding(
@@ -66,78 +76,94 @@ class _CabinetryViewState extends State<CabinetryView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TopBarContactInfo(branchData: branchData,),
+            TopBarContactInfo(
+              branchData: branchData,
+            ),
             verticalSpacing(16.h),
             // Padding(
             //   padding: EdgeInsets.symmetric(horizontal: 8.w),
             //   child: SearchField(),
             // ),
             // verticalSpacing(16.h),
-             Text(
+            Text(
               "Cabinet Lines",
               style: AppStyles.h1(color: AppColors.primaryColor),
             ),
-             Text(
+            Text(
               "Click on door to view available products",
-              style:  AppStyles.h5(color: Colors.black54),
+              style: AppStyles.h5(color: Colors.black54),
             ),
-             SizedBox(height: 16.h),
-            Obx((){
-              List<Category>? categoryList = cabinetryController.cabinetryModel.value.data?.categories??[];
-              if(cabinetryController.isLoading.value){
+            SizedBox(height: 16.h),
+            Obx(() {
+              List<Category>? categoryList =
+                  cabinetryController.cabinetryModel.value.data?.categories ??
+                      [];
+              if (cabinetryController.isLoading.value) {
                 return const Center(child: CircularProgressIndicator());
-              } else if(categoryList.isEmpty){
-                return  const Center(child: Text('Cabinet is empty'));
+              } else if (categoryList.isEmpty) {
+                return const Center(child: Text('Cabinet is empty'));
               }
               return Expanded(
                 child: Column(
-                  children: categoryList.map((category){
-                final cabinetItemList = category.cabinet;
+                  children: categoryList.map((category) {
+                    final cabinetItemList = category.cabinet;
                     return Expanded(
                       child: Column(
                         children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            AppButton(text:'${category.categoryName}',buttonColor:AppColors.roseTaupeColor,textStyle: AppStyles.h4(color: Colors.white),),
-                            Expanded(child: Divider(height: 2.h,color: AppColors.roseTaupeColor,))
-                          ],
-                        ),
-                        SizedBox(height: 12.h),
-                        Expanded(
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                              childAspectRatio: 0.7,
-                            ),
-                            shrinkWrap: true,
-                            itemCount: cabinetItemList?.length,
-                            itemBuilder: (context, index) {
-                              final cabinetItems = cabinetItemList![index];
-                              return GestureDetector(
-                                onTap: (){
-                                  Get.toNamed(Routes.CABINET_DETAIL);
-                                },
-                                child: CabinetCard(
-                                  image: '${ApiConstants.imageBaseUrl}${cabinetItems.imageUrl}',
-                                  code: cabinetItems.code??'s5',
-                                  colorName: cabinetItems.colorName??'Grey white',
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              AppButton(
+                                text: '${category.categoryName}',
+                                buttonColor: AppColors.roseTaupeColor,
+                                textStyle: AppStyles.h4(color: Colors.white),
+                              ),
+                              Expanded(
+                                child: Divider(
+                                  height: 2.h,
+                                  color: AppColors.roseTaupeColor,
                                 ),
-                              );
-                            },
+                              ),
+                            ],
                           ),
-                        ),
-                       ],
+                          SizedBox(height: 12.h),
+                          Expanded(
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                crossAxisSpacing: 10,
+                                mainAxisSpacing: 10,
+                                childAspectRatio: 0.7,
+                              ),
+                              shrinkWrap: true,
+                              itemCount: cabinetItemList?.length,
+                              itemBuilder: (context, index) {
+                                final cabinetItems = cabinetItemList![index];
+                                final selectedCabinetId = cabinetItemList[index].id;
+                                return GestureDetector(
+                                  onTap: () {
+                                    print('cabinetId :$selectedCabinetId');
+                                    Get.toNamed(Routes.CABINET_DETAIL, arguments: {'cabinetId' : selectedCabinetId});
+                                  },
+                                  child: CabinetCard(
+                                    image:
+                                        '${ApiConstants.imageBaseUrl}${cabinetItems.imageUrl}',
+                                    code: cabinetItems.code ?? 's5',
+                                    colorName: cabinetItems.colorName ??
+                                        'Grey white',
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }).toList(),
                 ),
               );
-            }
-
-            ),
+            }),
           ],
         ),
       ),
@@ -145,4 +171,3 @@ class _CabinetryViewState extends State<CabinetryView> {
     );
   }
 }
-

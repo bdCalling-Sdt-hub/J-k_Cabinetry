@@ -49,4 +49,3 @@ app.*.map.json
 /ios/app/release
 
 lib/sk_key.dart
-lib/sk_key.dart

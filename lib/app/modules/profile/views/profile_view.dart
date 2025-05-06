@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
-import 'package:jk_cabinet/app/data/external_url.dart';
 import 'package:jk_cabinet/app/modules/profile/controllers/profile_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
-import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
-import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_page_loading.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
@@ -64,8 +60,7 @@ class ProfileView extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Obx(
-                            () {
+                      Obx(() {
                           if (_profileController.profileModel.value.data ==
                               null) {
                             return Text(

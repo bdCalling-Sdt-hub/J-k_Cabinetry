@@ -10,6 +10,8 @@ import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 //import 'package:jk_cabinet/sk_key.dart';
 import 'package:http/http.dart' as http;
 
+import '../../../../sk_key.dart';
+
 class PaymentController extends GetxController{
 //
   Map<String, dynamic>? paymentIntent;
@@ -100,8 +102,7 @@ class PaymentController extends GetxController{
       };
       var response = await http.post(Uri.parse('https://api.stripe.com/v1/payment_intents'),
         headers: {
-        /// todo: uncomment
-          //'Authorization': 'Bearer ${SKey.sSecTestKey}',
+          'Authorization': 'Bearer ${SKey.sSecTestKey}',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: body,

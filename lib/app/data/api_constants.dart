@@ -32,7 +32,8 @@ static String emailSendUrl= '$baseUrl/auth/forgot-password';
 //static String logInUrl= '/auth/login';
 static String resetPasswordNoneUrl= '/auth/reset-password/none';
 static String branchUrl= '$baseUrl/branch/read-branch/open';
-static String cabinetDetailsUrl= '$baseUrl/parts/get-parts-by-categories';
+static String cabinetPartsDetailsUrl= '$baseUrl/parts/get-parts-by-categories';
+static String cabinetDetailsUrl(String cabinetId)=> '$baseUrl/cabinetry/get-cabinetry-by-id/$cabinetId';
 
 static String  cabinetryUrl (String branchId)=> '$baseUrl/cabinetry/read-cabinetry-without-login/$branchId';
 static String  searchNameUrl (String name)=> '$baseUrl/users?fullName=$name';
