@@ -94,21 +94,31 @@ class MessageAttributes {
   MessageAttributes.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     chatId = json['chatId'];
-    senderId =
-        json['senderId'] != null ? User.fromJson(json['senderId']) : null;
-    receiverId =
-        json['receiverId'] != null ? User.fromJson(json['receiverId']) : null;
-    messageContent =
-        json['content'] != null ? MessageContent.fromJson(json['content']) : null;
-    if (json['seenBy'] != null) {
-      seenBy = List<String>.from(json['seenBy']);
+
+    // Handle senderId: String or Map
+    if (json['senderId'] is Map<String, dynamic>) {
+      senderId = User.fromJson(json['senderId']);
+    } else if (json['senderId'] is String) {
+      // Fetch User data or create minimal User object
+      senderId = User(sId: json['senderId']);
+    } else {
+      senderId = null;
     }
-    if (json['deletedBy'] != null) {
-      deletedBy = List<String>.from(json['deletedBy']);
+
+    // Handle receiverId: String or Map
+    if (json['receiverId'] is Map<String, dynamic>) {
+      receiverId = User.fromJson(json['receiverId']);
+    } else if (json['receiverId'] is String) {
+      // Fetch User data or create minimal User object
+      receiverId = User(sId: json['receiverId']);
+    } else {
+      receiverId = null;
     }
-    if (json['unsentBy'] != null) {
-      unsentBy = List<String>.from(json['unsentBy']);
-    }
+
+    messageContent = json['content'] != null ? MessageContent.fromJson(json['content']) : null;
+    seenBy = json['seenBy'] != null ? List<String>.from(json['seenBy']) : null;
+    deletedBy = json['deletedBy'] != null ? List<String>.from(json['deletedBy']) : null;
+    unsentBy = json['unsentBy'] != null ? List<String>.from(json['unsentBy']) : null;
     createdAt = json['createdAt'];
     updatedAt = json['updatedAt'];
     v = json['__v'];

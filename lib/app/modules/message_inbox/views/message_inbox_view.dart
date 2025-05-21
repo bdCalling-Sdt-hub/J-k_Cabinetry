@@ -229,7 +229,7 @@ class _MessageInboxViewState extends State<MessageInboxView> {
             return;
           }
 
-          final senderId = await PrefsHelper.getString('sender-id');
+         final senderId = await PrefsHelper.getString('sender-id');
           final receiverId = await PrefsHelper.getString('receiver-id');
 
           if (chatId != null && chatId!.isNotEmpty) {

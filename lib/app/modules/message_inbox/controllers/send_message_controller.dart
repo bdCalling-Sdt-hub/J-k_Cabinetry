@@ -12,20 +12,24 @@ import 'package:logger/logger.dart';
 
 import '../model/inbox_history_model.dart';
 
-
 class SendMessageController extends GetxController {
   RxString commentMessage = ''.obs;
   File? selectedIFile;
-  var filePath=''.obs;
-  RxBool isLoading=false.obs;
+  var filePath = ''.obs;
+  RxBool isLoading = false.obs;
   String chatId = Get.arguments['chatId'];
   final _logger = Logger();
-final MessageInboxController _messageInboxController=Get.put(MessageInboxController());
-  sendMessage(
-      {required String message,
-      String? filePath,
-      required String receiverId,
-        required String chatId}) async {
+  final MessageInboxController _messageInboxController =
+  Get.put(MessageInboxController());
+
+
+  //send message via rest api instead of socket
+  sendMessage({
+    required String message,
+    String? filePath,
+    required String receiverId,
+    required String chatId,
+  }) async {
     String token = await PrefsHelper.getString('sign-in-token');
     Map<String, String> headers = {
       'Authorization': 'Bearer $token',
@@ -37,15 +41,14 @@ final MessageInboxController _messageInboxController=Get.put(MessageInboxControl
       'receiverId': receiverId,
     };
 
-    var request =  http.MultipartRequest('POST', Uri.parse(ApiConstants.sendMessageUrl));
+    var request = http.MultipartRequest('POST', Uri.parse(ApiConstants.sendMessageUrl));
     request.fields.addAll(body);
-
-    File fileData = File(filePath!);
 
     try {
       // Determine file type and add it to the request
-      isLoading.value=true;
-      if(fileData.path.isNotEmpty){
+      isLoading.value = true;
+      if (filePath != null && filePath.isNotEmpty) {
+        File fileData = File(filePath);
         await _addFileToRequest(request, fileData);
       }
 
@@ -58,14 +61,33 @@ final MessageInboxController _messageInboxController=Get.put(MessageInboxControl
       http.StreamedResponse response = await request.send();
       var responseBody = await response.stream.bytesToString();
 
-      if (response.statusCode == HttpStatus.ok ||response.statusCode == HttpStatus.created ) {
-        var responseData = jsonDecode(responseBody);
-        commentMessage.value = responseData['message'];
-        var newMessage = MessageAttributes.fromJson(responseData['data']);
-        _logger.e(newMessage);
-        // _messageInboxController.chatMessages.add(newMessage);
+      if (response.statusCode == HttpStatus.ok || response.statusCode == HttpStatus.created) {
+        try {
+          var responseData = jsonDecode(responseBody);
+          commentMessage.value = responseData['message'];
 
-        print("Response Success : $responseBody");
+          try {
+            // Decode responseData['data'] if it's a String
+            final messageData = responseData['data'] is String
+                ? jsonDecode(responseData['data'])
+                : responseData['data'];
+            if (messageData != null) {
+              // Create a MessageAttributes object, handling string senderId/receiverId
+              var newMessage = MessageAttributes.fromJson(messageData);
+              _messageInboxController.addNewMessage(newMessage);
+              print("Message added successfully: ${newMessage.sId}");
+            } else {
+              _logger.e('Invalid data format for message: ${responseData['data']}');
+            }
+          } catch (e) {
+            _logger.e('Error parsing new message: $e');
+            _logger.e('Response data: ${responseData['data']}');
+          }
+
+          print("Response Success: $responseBody");
+        } catch (e) {
+          _logger.e('Error decoding response: $e');
+        }
       } else {
         var errorData = jsonDecode(responseBody);
         commentMessage.value = errorData['message'] ?? 'Something went wrong';
@@ -76,18 +98,20 @@ final MessageInboxController _messageInboxController=Get.put(MessageInboxControl
       print(e.toString());
       commentMessage.value = 'An error occurred while uploading the file.';
       Get.snackbar('Failed', commentMessage.value);
-    }finally{
-      isLoading.value=false;
+      print(e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
   pickImageFromGallery() async {
-    final returnImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final returnImage =
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnImage == null) return;
     selectedIFile = File(returnImage.path);
-    filePath.value=selectedIFile!.path;
+    filePath.value = selectedIFile!.path;
     print('ImagesPath:$filePath');
-    if(filePath.value.isNotEmpty){
+    if (filePath.value.isNotEmpty) {
       Get.snackbar('File selected', '');
     }
   }
@@ -118,6 +142,4 @@ final MessageInboxController _messageInboxController=Get.put(MessageInboxControl
       throw Exception('Unsupported file type');
     }
   }
-
-
 }

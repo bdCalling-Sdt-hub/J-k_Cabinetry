@@ -47,7 +47,8 @@ class MessageInboxController extends GetxController {
     try {
       final messages = await fetchChatHistory(chatId);
       chatMessages.assignAll(messages);
-      listenToNewMessages(chatId);
+      //Todo: joybangla korte hobe
+      // listenToNewMessages(chatId);
     } catch (e) {
       print('Error fetching chat history: $e');
     } finally {
@@ -88,7 +89,9 @@ class MessageInboxController extends GetxController {
       print('Socket connected');
       _logger.i('====Socket Connected to the server=====');
       if (chatId.isNotEmpty) {
-        listenToNewMessages(chatId);
+
+        //Todo: joybangla korte hobe
+      //  listenToNewMessages(chatId);
       }
     });
 
