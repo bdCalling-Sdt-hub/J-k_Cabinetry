@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
+import 'package:jk_cabinet/app/modules/cart/controllers/make_payment_controller.dart';
 import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
 import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
@@ -33,6 +31,7 @@ class _InvoiceViewState extends State<InvoiceView> {
 
   final CartController _cartController=Get.find();
   final HomeController homeController = Get.put(HomeController());
+  final PaymentController _paymentController = Get.put(PaymentController());
   BranchData? branchData;
   String transactionId='';
 
@@ -76,10 +75,11 @@ class _InvoiceViewState extends State<InvoiceView> {
               ],
             ),
              SizedBox(height: 16.h),
-            Text(
-              'Order ID: $transactionId',
-              style: AppStyles.h3(fontWeight: FontWeight.bold),
-            ),
+            Obx((){
+              return Text('Order ID : ${_paymentController.paymentResponseModel.value.data?.orderId ?? ''}',
+                style: AppStyles.h4(color: AppColors.primaryColor,fontWeight: FontWeight.bold),
+              );
+            }),
              SizedBox(height: 5.h),
             Text(
               'Order date: $formattedDate',
@@ -197,9 +197,7 @@ class _InvoiceViewState extends State<InvoiceView> {
             style: pw.TextStyle(fontSize: 24, font: customFont),
           ),
           pw.SizedBox(height: 16.h),
-          pw.Text(
-            'Order ID: $transactionId',
-            style: pw.TextStyle(fontSize: 18, font: customFont),
+          pw. Text('Order ID : ${_paymentController.paymentResponseModel.value.data?.orderId ?? ''}',
           ),
           pw.SizedBox(height: 5.h),
           pw.SizedBox(height: 16),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:jk_cabinet/app/modules/sign_up/controllers/sign_up_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
@@ -13,6 +12,8 @@ import 'package:jk_cabinet/common/widgets/custom_text_field.dart';
 import 'package:jk_cabinet/common/widgets/have_an_account_text_button.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 import 'package:jk_cabinet/common/widgets/text_required.dart';
+
+import '../../home/model/branch_model.dart';
 
 class SignUpView extends StatefulWidget {
   const SignUpView({super.key});
@@ -310,28 +311,29 @@ class _SignUpViewState extends State<SignUpView> {
                 CustomTextField(
                     hintText: "Type sales rep name, if you know",
                     contentPaddingVertical: 16.h,
-                    controller: _signUpController.salesRepCtrl),
+                    controller: _signUpController.salesRepCtrl,
+                ),
 
-                /// Agency Dropdown
+                /// branch Dropdown
                 verticalSpacing(10.h),
                 TextRequired(
-                  text: "Select your agency",
+                  text: "Select your branch",
                   textStyle: AppStyles.h4(family: "Schuyler"),
                 ),
                 verticalSpacing(10.h),
 
+                /// branch selection dropdown
                 Obx(() {
-                  String? value = _signUpController.agency?.value;
-                  return DropdownButtonFormField<String>(
-                      value: value!.isNotEmpty ? value : null,
-                      hint: const Text("Select Agency"),
-                      items: _signUpController.agencyList
-                          .map((agency) => DropdownMenuItem(
-                          value: agency, child: Text(agency)))
+                  return DropdownButtonFormField<BranchData>(
+                      value: _signUpController.selectedBranch.value,
+                      hint: const Text("Select Branch"),
+                      items: _signUpController.branchList
+                          .map((branch) => DropdownMenuItem<BranchData>(
+                          value: branch, child: Text(branch.name ?? '')))
                           .toList(),
-                      onChanged: (value) {
-                        _signUpController.agency?.value = value!;
-                        print(_signUpController.agency?.value);
+                      onChanged: (BranchData? selected) {
+                        _signUpController.selectedBranch.value = selected!;
+                        print(_signUpController.branch?.value);
                       });
                 }),
 

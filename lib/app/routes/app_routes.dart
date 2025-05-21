@@ -12,6 +12,7 @@ abstract class Routes {
   static const PROFILE = _Paths.PROFILE;
   static const PROFILE_UPDATE = _Paths.PROFILE_UPDATE;
   static const CABINETRY = _Paths.CABINETRY;
+
   static const CART = _Paths.CART;
   static const CABINET_DETAIL = _Paths.CABINET_DETAIL;
   static const CABINET_PARTS = _Paths.CABINET_PARTS;
@@ -35,6 +36,8 @@ abstract class Routes {
   static const PRIVAACY_POLICY = _Paths.PRIVAACY_POLICY;
   static const SUPPORT = _Paths.SUPPORT;
   static const TERMS_CONDITION = _Paths.TERMS_CONDITION;
+  static const CABINET_DETAIL_TAB_VIEW = _Paths.CABINET_DETAIL_TAB_VIEW;
+  static const SHOP_ACCESS = _Paths.SHOP_ACCESS;
 }
 
 abstract class _Paths {
@@ -50,6 +53,7 @@ abstract class _Paths {
   static const CABINETRY = '/cabinetry';
   static const CART = '/cart';
   static const CABINET_DETAIL = '/cabinet-detail';
+  static const CABINET_DETAIL_TAB_VIEW = '/cabinet-detail-tab-bar-view';
   static const CABINET_PARTS = '/cabinet-parts';
   static const CABINET_PARTS_RECENTVIEWED_DETAILS =
       '/cabinet-parts-recentviewed-details';
@@ -71,4 +75,5 @@ abstract class _Paths {
   static const PRIVAACY_POLICY = '/privacy_policy';
   static const SUPPORT = '/support';
   static const TERMS_CONDITION = '/term_condition';
+  static const SHOP_ACCESS = '/shop-access';
 }

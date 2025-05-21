@@ -2,7 +2,7 @@ class ProfileModel {
   int? statusCode;
   bool? success;
   String? message;
-  Data? data;
+  ProfileData? data;
 
   ProfileModel({this.statusCode, this.success, this.message, this.data});
 
@@ -10,7 +10,7 @@ class ProfileModel {
     statusCode = json['statusCode'];
     success = json['success'];
     message = json['message'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? ProfileData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -25,7 +25,7 @@ class ProfileModel {
   }
 }
 
-class Data {
+class ProfileData {
   String? sId;
   String? companyName;
   String? firstName;
@@ -60,7 +60,7 @@ class Data {
   int? iV;
   String? profileImage;
 
-  Data(
+  ProfileData(
       {this.sId,
         this.companyName,
         this.firstName,
@@ -96,7 +96,7 @@ class Data {
         this.profileImage,
       });
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ProfileData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
     companyName = json['companyName'];
     firstName = json['firstName'];

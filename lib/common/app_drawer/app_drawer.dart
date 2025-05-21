@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/external_url.dart';
+import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
@@ -11,8 +12,15 @@ import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:jk_cabinet/common/url_luncher/externer_url_luncher.dart';
 
-class AppDrawer extends StatelessWidget {
+class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
+
+  @override
+  State<AppDrawer> createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  final CartController _cartController = Get.put(CartController());
 
   @override
   Widget build(BuildContext context) {
@@ -183,7 +191,6 @@ class AppDrawer extends StatelessWidget {
                       AppString.signOutText,
                       style: AppStyles.h3(color: Colors.redAccent),
                     ),
-
                     leading: SvgPicture.asset(
                       AppIcons.logOutIcon,
                       height: 32.h,
@@ -196,6 +203,8 @@ class AppDrawer extends StatelessWidget {
                     onTap: () async {
                       await PrefsHelper.remove(AppConstants.signInToken);
                       await PrefsHelper.remove(AppConstants.userId);
+                      PrefsHelper.remove('user_verification_status');
+                      await _cartController.clearCart();
                       Get.toNamed(Routes.SIGN_IN);
                     },
                   ),

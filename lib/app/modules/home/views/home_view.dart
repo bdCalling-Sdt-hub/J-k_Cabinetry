@@ -23,6 +23,7 @@ import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../profile/controllers/profile_controller.dart';
 import '../widgets/steps_section.dart';
 
 class HomeView extends StatefulWidget {
@@ -37,12 +38,13 @@ class _HomeViewState extends State<HomeView> {
   final HomeController homeController = Get.put(HomeController());
   String cabinetVideoUrl = 'https://www.youtube.com/watch?v=7KkvrgMk8Us';
 
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((__)async{
       await homeController.fetchBranch();
+      final ProfileController _profileController = Get.put(ProfileController());
+_profileController.verifyLoading.value;
       _showBranchSelectionDialog(context);
     });
   }
@@ -61,8 +63,8 @@ class _HomeViewState extends State<HomeView> {
               return TopBarContactInfo(branchData: homeController.selectedBranch.value,);
             }),
             verticalSpacing(16.h),
-            BannerSection(),
-            StepsSection(),
+            const BannerSection(),
+            const StepsSection(),
             // Use Obx to reactively update the UI when the youtubePlayerController is set
             Obx(() {
               if (homeController.youtubePlayerController.value != null && homeController.youtubePlayerController.value?.initialVideoId != null) {
@@ -95,7 +97,6 @@ class _HomeViewState extends State<HomeView> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
@@ -103,54 +104,65 @@ class _HomeViewState extends State<HomeView> {
                 "Select Your Nearest Branch",
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "To ensure the best experience while exploring, please choose your nearest Branch. This will also be the location you are ordering from, making your journey smoother and more relevant.",
-                    style: TextStyle(fontSize: 14),
-                  ),
-                  const SizedBox(height: 10),
-
-                   Obx(() {
-                    List<BranchData>? branchList = homeController.branchModel.value.data;
-                    if (homeController.isLoading.value) {
-                      return const CircularProgressIndicator();
-                    }
-                    if (branchList == null || branchList.isEmpty) {
-                      return const Text('No Branch Found');
-                    }
-                    return Column(
-                      children: branchList.map((branch) {
-                        return RadioListTile<BranchData>(
-                            title: Text(branch.name ?? ''),
-                            value: branch,
-                            groupValue: homeController.selectedBranch.value,
-                            activeColor: AppColors.primaryColor,
-                            hoverColor: AppColors.primaryColor,
-                            selectedTileColor: AppColors.primaryColor.withValues(alpha: 0.3),
-                           // selected: branch == homeController.selectedBranch.value,
-                            onChanged: (branchValue) async {
-                              if (branchValue == null) return;
+              content: ConstrainedBox(
+                // Use ConstrainedBox to limit max height
+                constraints: BoxConstraints(
+                  maxHeight: 400.h,
+                ),
+                child: SingleChildScrollView(
+                  // Enable scrolling for the entire content
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min, // Minimize Column height
+                    children: [
+                      const Text(
+                        "To ensure the best experience while exploring, please choose your nearest Branch. This will also be the location you are ordering from, making your journey smoother and more relevant.",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(height: 10.h),
+                      Obx(() {
+                        List<BranchData>? branchList = homeController.branchModel.value.data;
+                        if (homeController.isLoading.value) {
+                          return const Center(child: CircularProgressIndicator());
+                        }
+                        if (branchList == null || branchList.isEmpty) {
+                          return const Center(child: Text('No Branch Found'));
+                        }
+                        return Column(
+                          mainAxisSize: MainAxisSize.min, // Minimize inner Column height
+                          children: branchList.map((branch) {
+                            return RadioListTile<BranchData>(
+                              title: Text(
+                                branch.name ?? '',
+                                overflow: TextOverflow.ellipsis, // Prevent text overflow
+                              ),
+                              value: branch,
+                              groupValue: homeController.selectedBranch.value,
+                              activeColor: AppColors.primaryColor,
+                              hoverColor: AppColors.primaryColor,
+                              selectedTileColor: AppColors.primaryColor.withOpacity(0.3),
+                              onChanged: (branchValue) async {
+                                if (branchValue == null) return;
                                 await PrefsHelper.remove('branchInfo');
                                 final branchJson = jsonEncode(branchValue.toJson());
                                 await PrefsHelper.setString('branchInfo', branchJson);
                                 homeController.selectedBranch.value = branchValue;
-                            }
+                                setState(() {}); // Update dialog state
+                              },
+                            );
+                          }).toList(),
                         );
-                      }).toList(),
-                    );
-                  }),
-                ],
+                      }),
+                    ],
+                  ),
+                ),
               ),
-              /// Explore branch button
               actions: [
                 CustomButton(
-                    onTap: () async {
-                      await  getVideo();
-                      Get.back();
-                    },
-                    text: 'Explore'
+                  onTap: () async {
+                    await getVideo();
+                    Get.back();
+                  },
+                  text: 'Explore',
                 ),
               ],
             );
@@ -166,7 +178,7 @@ class _HomeViewState extends State<HomeView> {
       String? videoId = YoutubePlayer.convertUrlToId(cabinetVideoUrl);
       homeController.youtubePlayerController.value = YoutubePlayerController(
         initialVideoId: videoId!,
-        flags: const YoutubePlayerFlags(autoPlay: true, mute: false),
+        flags: const YoutubePlayerFlags(autoPlay: false, mute: false),
       );
       setState(() {});  // Update the UI after the controller is set
     }

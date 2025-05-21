@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:jk_cabinet/app/modules/bottom_menu/bottom_menu..dart';
 import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
 import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
@@ -9,13 +13,12 @@ import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
-import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/casess_network_image.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
-import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../controllers/cart_controller.dart';
 
@@ -28,6 +31,54 @@ class _CartViewState extends State<CartView> {
   final CartController cartController = Get.put(CartController());
   final HomeController homeController = Get.put(HomeController());
   BranchData? branchData;
+
+  File? _cachedImageFile;
+  bool _isDownloading = false;
+
+  Future<void> _saveAndDisplayImage(String imageUrl) async {
+    setState(() => _isDownloading = true);
+
+    try {
+      // download image bytes
+      final response = await http.get(Uri.parse(imageUrl));
+      if (response.statusCode != 200) {
+        throw Exception('Failed to download image');
+      }
+
+      // compress the image
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        response.bodyBytes,
+        minHeight: 800,
+        minWidth: 800,
+        quality: 85,
+        format: CompressFormat.jpeg,
+      );
+
+      // Get CACHE directory (temporary storage)
+      final cacheDirectory = await getTemporaryDirectory();
+      // create file name from url
+      final fileName = 'cached_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      print(fileName);
+      final filePath = '${cacheDirectory.path}/$fileName';
+      print(filePath);
+
+      // save to cache
+      final file = File(filePath);
+      await file.writeAsBytes(compressedBytes);
+
+      setState(() {
+        _cachedImageFile = file;
+        _isDownloading = false;
+      });
+    } catch (e) {
+      setState(() => _isDownloading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+    }
+  }
+
+
   @override
   void initState() {
     super.initState();
@@ -46,7 +97,7 @@ class _CartViewState extends State<CartView> {
         chatOnTap: () {},
         notificationCount: '40',
       ),
-      drawer: AppDrawer(),
+      drawer: const AppDrawer(),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         child: SingleChildScrollView(
@@ -93,8 +144,7 @@ class _CartViewState extends State<CartView> {
                                         fontWeight: FontWeight.bold),
                                   ),
                                   GestureDetector(
-                                    onTap: () =>
-                                        cartController.removeItem(index),
+                                    onTap: () => cartController.removeItem(index),
                                     child: const Icon(Icons.close, size: 20),
                                   ),
                                 ],
@@ -110,12 +160,21 @@ class _CartViewState extends State<CartView> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
+
+                                  ///--->>>>> The product image here <<<<<-------
+                                  // FutureBuilder<void>(future: _saveAndDisplayImage(item.productImg), builder: (context, snapshot) {
+                                  //   if (_cachedImageFile != null) {
+                                  //     return Image.file(_cachedImageFile!);
+                                  //   }
+                                  //   return const SizedBox();
+                                  // }),
                                   CustomNetworkImage(
                                     imageUrl: item.productImg,
                                     height: 70.h,
                                     width: 80.w,
+                                    backgroundColor: Colors.grey[200],
                                   ),
-                                  Spacer(),
+                                  const Spacer(),
                                   Column(
                                     children: [
                                       Text(
@@ -198,7 +257,7 @@ class _CartViewState extends State<CartView> {
                         style: AppStyles.h4(),
                       ),
                       subtitle: Text(
-                        '\$${cartController.shippingCost.toStringAsFixed(2)}',
+                        '\$${cartController.shippingCost.value.toStringAsFixed(2)}',
                         style: AppStyles.h5(),
                       ),
                       controlAffinity: ListTileControlAffinity.leading,
@@ -234,9 +293,11 @@ class _CartViewState extends State<CartView> {
               ),
               verticalSpacing(12.h),
               CustomButton(
-                  onTap: () {
-                    Get.toNamed(Routes.CHECKOUT);
-                  }, text: 'CheckOut'),
+                onTap: () {
+                  Get.toNamed(Routes.CHECKOUT);
+                },
+                text: 'CheckOut',
+              ),
               verticalSpacing(16.h),
             ],
           ),
@@ -247,6 +308,7 @@ class _CartViewState extends State<CartView> {
 }
 
 class CartItem {
+  String id;
   String name;
   double price;
   int quantity;
@@ -255,6 +317,7 @@ class CartItem {
   String productImg;
 
   CartItem({
+    required this.id,
     required this.name,
     required this.price,
     required this.quantity,
@@ -263,6 +326,5 @@ class CartItem {
     this.isAssemblyChecked = false,
   });
 
-  double get totalPrice =>
-      (price * quantity) + (isAssemblyChecked ? assemblyCost * quantity : 0);
+  double get totalPrice => (price * quantity) + (isAssemblyChecked ? assemblyCost * quantity : 0);
 }

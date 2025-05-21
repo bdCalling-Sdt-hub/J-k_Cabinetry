@@ -13,7 +13,11 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
     this.backgroundColor,
     this.textColor,
     this.notificationCount,
-    this.chatOnTap, this.isShowChat = false, this.text, this.isShowText = false,
+    this.chatOnTap,
+    this.isShowChat = false,
+    this.text,
+    this.isShowText = false,
+    this.bottom,
   });
 
   final Color? backgroundColor;
@@ -23,45 +27,53 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
   final bool isShowChat;
   final bool isShowText;
   final String? text;
+  final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: backgroundColor ?? Colors.white,
-      title:isShowText? Text(text!,style: AppStyles.h2(),):Image.asset(AppImage.appLogoImg, height: 35.h),
+      title: isShowText
+          ? Text(
+              text!,
+              style: AppStyles.h2(),
+            )
+          : Image.asset(AppImage.appLogoImg, height: 35.h),
       centerTitle: true,
+      bottom: bottom,
       actions: [
         Padding(
-          padding:  EdgeInsets.all(8.0.sp),
+          padding: EdgeInsets.all(8.0.sp),
           child: Stack(
             children: [
-              if(isShowChat)
-              GestureDetector(
-                onTap:  () {
-                  Get.toNamed(Routes.MESSAGE);
-                },
-                child: SvgPicture.asset(
-                  AppIcons.bubbleChatIcon,
-                  height: 40.h,
+              if (isShowChat)
+                GestureDetector(
+                  onTap: () {
+                    Get.toNamed(Routes.MESSAGE);
+                  },
+                  child: SvgPicture.asset(
+                    AppIcons.bubbleChatIcon,
+                    height: 40.h,
+                  ),
                 ),
-              ),
-              if(isShowChat && notificationCount != null && notificationCount!.isNotEmpty)
+              if (isShowChat &&
+                  notificationCount != null &&
+                  notificationCount!.isNotEmpty)
                 Positioned(
-                      top: 0,
-                      right: 0,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.redAccent, shape: BoxShape.circle),
-                        child: Padding(
-                          padding: EdgeInsets.all(1.0.sp),
-                          child: Text(
-                            notificationCount ?? '',
-                            style: AppStyles.h6(color: Colors.white),
-                          ),
-                        ),
+                  top: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.redAccent, shape: BoxShape.circle),
+                    child: Padding(
+                      padding: EdgeInsets.all(1.0.sp),
+                      child: Text(
+                        notificationCount ?? '',
+                        style: AppStyles.h6(color: Colors.white),
                       ),
-                    )
-
+                    ),
+                  ),
+                ),
             ],
           ),
         )

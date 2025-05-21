@@ -1,20 +1,25 @@
-import 'package:cached_network_image/cached_network_image.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:jk_cabinet/app/modules/message_inbox/controllers/message_inbox_controller.dart';
 import 'package:jk_cabinet/app/modules/message_inbox/controllers/send_message_controller.dart';
+import 'package:jk_cabinet/app/modules/message_inbox/model/inbox_history_model.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_icons/app_icons.dart';
-import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
+import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:jk_cabinet/common/widgets/casess_network_image.dart';
 import 'package:jk_cabinet/common/widgets/custom_text_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+
+import '../../../data/api_constants.dart';
+import '../../all chats/controllers/all_chats_controller.dart';
+import '../../all chats/model/all_chats_model.dart';
 
 class MessageInboxView extends StatefulWidget {
   const MessageInboxView({super.key});
@@ -26,66 +31,79 @@ class MessageInboxView extends StatefulWidget {
 class _MessageInboxViewState extends State<MessageInboxView> {
   final TextEditingController _msgCtrl = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final AllChatsController _allChatsController = Get.put(AllChatsController());
   final SendMessageController _sendMessageController = Get.put(SendMessageController());
+  final MessageInboxController _messageInboxController = Get.put(MessageInboxController());
   final List<String> menuOptions = [/*'Delete Message',*/ 'View Profile'];
-  final List<String> senderReceiverList = [
-    'Sender',
-    'Receiver',
-    'Receiver',
-    'Sender'
-  ];
+
+  final String? chatId = Get.arguments['chatId'];
+  final RxBool _isLoading = true.obs;
 
   void scrollToBottom() {
-    if (_scrollController.hasClients) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadChatData();
+  }
+
+  Future<void> _loadChatData() async {
+    _isLoading.value = true;
+    if (chatId != null) {
+      await _messageInboxController.fetchAndListenToChatHistory();
+      scrollToBottom();
+      _isLoading.value = false;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(100.0),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Center(
-              child: Padding(
-                padding: EdgeInsets.only(top: 50.h),
-                child: Row(
+        preferredSize: const Size.fromHeight(100.0),
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Center(
+            child: Padding(
+              padding: EdgeInsets.only(top: 50.h),
+              child: Obx(() {
+                final messageAttributes = _allChatsController.allChatsModel.value.data?.attributes?.first;
+                SenderId? senderId = messageAttributes?.senderId;
+                return Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Get.back();
-                      },
-                      child: CircleAvatar(
-                          radius: 12,
-                          backgroundColor: Colors.transparent,
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            size: 22,
-                            color: AppColors.textColor,
-                          )),
-                    ),
+                    // ios back button
+                    buildInkBackButton(),
                     SizedBox(width: 10.w),
+
+                    // Contact profile photo
                     CustomNetworkImage(
-                      imageUrl: "",
+                      imageUrl: "${ApiConstants.imageBaseUrl}${senderId?.profileImage}",
                       height: 50.h,
                       width: 50.w,
                       boxShape: BoxShape.circle,
                     ),
 
                     SizedBox(width: 16.w),
+
+                    // Contact name
                     Expanded(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Shuvokh',
+                          Text(senderId?.firstName ?? '',
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               style: AppStyles.h3()),
@@ -98,100 +116,63 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                         ],
                       ),
                     ),
-
-                    // Expanded(
-                    //   child: Align(
-                    //     alignment: Alignment.centerRight,
-                    //     child: PopupMenuButton<String>(
-                    //       icon: SvgPicture.asset(AppIcons.messageMenuIcon),
-                    //       onSelected: (value) {
-                    //         if (value == 'Delete Message') {
-                    //           print('Delete message');
-                    //         } else if (value == 'View Profile') {
-                    //           print('View profile');
-                    //         }
-                    //       },
-                    //       itemBuilder: (BuildContext context) {
-                    //         return menuOptions.map((String option) {
-                    //           return PopupMenuItem<String>(
-                    //             onTap: () {},
-                    //             value: option,
-                    //             child: Text(option),
-                    //           );
-                    //         }).toList();
-                    //       },
-                    //     ),
-                    //   ),
-                    // ),
                   ],
-                ),
-              ),
+                );
+              }),
             ),
-          )),
+          ),
+        ),
+      ),
 
-      ///=========== Body message area ==========
       body: Column(
         children: [
           Expanded(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              child: Column(
-                children: [
-                  Expanded(
-                      child: ListView.builder(
-                    padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).size.height * 0.15),
-                    controller: _scrollController,
-                    itemCount: senderReceiverList.length,
-                    itemBuilder: (context, index) {
-                      if (senderReceiverList[index] == 'Sender') {
-                        return senderBubble(context);
-                      } else {
-                        return receiverBubble(context);
-                      }
-                    },
-                  )),
-                ],
-              ),
+              child: Obx(() {
+                if (_isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (_messageInboxController.chatMessages.isEmpty) {
+                  return const Center(child: Text('No messages yet'));
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).size.height * 0.15),
+                  controller: _scrollController,
+                  itemCount: _messageInboxController.chatMessages.length,
+                  itemBuilder: (context, index) {
+                    final message = _messageInboxController.chatMessages[index];
+                    final MessageContent? messageContent = message.messageContent;
+                    final bool isSender = message.senderId?.sId == _messageInboxController.myID;
+
+                    if (messageContent == null) {
+                      return const SizedBox();
+                    }
+
+                    if (isSender) {
+                      return senderBubble(context, messageContent);
+                    }
+                    return receiverBubble(context, messageContent);
+                  },
+                );
+              }),
             ),
           ),
 
-          // GroupedListView<String, DateTime>(
-          //   elements: _chatController.chatModelList,
-          //   controller: _chatController.scrollController,
-          //   padding: EdgeInsets.symmetric(horizontal: 20.w),
-          //   order: GroupedListOrder.DESC,
-          //   itemComparator: (item1, item2) =>
-          //       item1.createdAt!.compareTo(item2.createdAt!),
-          //   groupBy: (InboxChatModel message) => DateTime(
-          //       message.createdAt!.year,
-          //       message.createdAt!.month,
-          //       message.createdAt!.day
-          //   ),
-          //   reverse: true,
-          //   shrinkWrap: true,
-          //   // physics: const AlwaysScrollableScrollPhysics(),
-          //   groupSeparatorBuilder: (DateTime date) {
-          //     return const SizedBox();
-          //   },
-          //   itemBuilder: (context,String id) {
-          //     return id == currentUserId
-          //         ? senderBubble(context,)
-          //         : receiverBubble(context,);
-          //   },
-          // ),
-
+          // Message text field options
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20),
               child: Row(
                 children: [
-                  /// File button
+                  // File button
                   InkWell(
                     onTap: () async {
                       await _sendMessageController.pickImageFromGallery();
-                      print(_sendMessageController.filePath.value);
                     },
                     child: Container(
                       height: 55.h,
@@ -216,7 +197,7 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                   ),
                   horizontalSpacing(8.w),
 
-                  ///>>>>>>>>>>>>>>>>>> Text Field >>>>>>>>>>>>>>>>>>>>
+                  // Text Field
                   Expanded(
                     child: CustomTextField(
                       contentPaddingVertical: 15.h,
@@ -224,55 +205,10 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                       controller: _msgCtrl,
                     ),
                   ),
-                  SizedBox(
-                    width: 10.w,
-                  ),
+                  SizedBox(width: 10.w),
 
-                  ///>>>>>>>>>>>>>>>>>> Sent Message Button >>>>>>>>>>>>>>>>>>>>
-                  Obx(() {
-                    if (_sendMessageController.isLoading.value) {
-                      return const Center(child: CupertinoActivityIndicator());
-                    }
-                    return InkWell(
-                      onTap: () async {
-                        if ('participantChatId'.isNotEmpty) {
-                          try {
-                            await _sendMessageController.sendMessage(
-                              _msgCtrl.text,
-                              _sendMessageController.filePath.value,
-                              'receiverId',
-                              'participantChatId',
-                            );
-                            _msgCtrl.text = '';
-                            _sendMessageController.filePath.value = '';
-                            scrollToBottom();
-                          } catch (e) {
-                            Get.snackbar('Error', 'Failed to send message: $e');
-                          }
-                        }
-                      },
-                      child: Container(
-                        height: 55.h,
-                        width: 52.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryColor,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.primaryColor.withOpacity(0.2),
-                          ),
-                        ),
-                        child: Center(
-                          child: SvgPicture.asset(
-                            AppIcons.sendLargeIcon,
-                            colorFilter: const ColorFilter.mode(
-                                Colors.white, BlendMode.srcIn),
-                            height: 25.h,
-                            width: 25.w,
-                          ),
-                        ),
-                      ),
-                    );
-                  })
+                  // Send Message Button
+                  buildSendButton()
                 ],
               ),
             ),
@@ -282,8 +218,79 @@ class _MessageInboxViewState extends State<MessageInboxView> {
     );
   }
 
-  /// Sent Massage bubble
-  senderBubble(BuildContext context) {
+  Obx buildSendButton() {
+    return Obx(() {
+      if (_sendMessageController.isLoading.value) {
+        return const Center(child: CupertinoActivityIndicator());
+      }
+      return InkWell(
+        onTap: () async {
+          if (_msgCtrl.text.trim().isEmpty && _sendMessageController.filePath.value.isEmpty) {
+            return;
+          }
+
+          final senderId = await PrefsHelper.getString('sender-id');
+          final receiverId = await PrefsHelper.getString('receiver-id');
+
+          if (chatId != null && chatId!.isNotEmpty) {
+            try {
+              await _sendMessageController.sendMessage(
+                receiverId: receiverId,
+                chatId: chatId!,
+                message: _msgCtrl.text,
+                filePath: _sendMessageController.filePath.value,
+              );
+              _msgCtrl.clear();
+              _sendMessageController.filePath.value = '';
+              scrollToBottom();
+            } catch (e) {
+              Get.snackbar('Error', 'Failed to send message: $e');
+            }
+          }
+        },
+        child: Container(
+          height: 55.h,
+          width: 52.w,
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: AppColors.primaryColor.withOpacity(0.2),
+            ),
+          ),
+          child: Center(
+            child: SvgPicture.asset(
+              AppIcons.sendLargeIcon,
+              colorFilter: const ColorFilter.mode(
+                  Colors.white, BlendMode.srcIn),
+              height: 25.h,
+              width: 25.w,
+            ),
+          ),
+        ),
+      );
+    });
+  }
+
+  InkWell buildInkBackButton() {
+    return InkWell(
+      onTap: () {
+        Get.back();
+      },
+      child: const CircleAvatar(
+        radius: 12,
+        backgroundColor: Colors.transparent,
+        child: Icon(
+          Icons.arrow_back_ios,
+          size: 22,
+          color: AppColors.textColor,
+        ),
+      ),
+    );
+  }
+
+  // Sent Message bubble
+  Widget senderBubble(BuildContext context, MessageContent message) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -305,25 +312,8 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                   ),
                   child: Column(
                     children: [
-                      ///====Show message=====
-                      showMessage(),
+                      showMessage(message),
                       verticalSpacing(6.h),
-                      SizedBox(
-                        width: 150.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.download,
-                                color: Colors.white,
-                                size: 20.sp,
-                              ),
-                            )
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -338,31 +328,45 @@ class _MessageInboxViewState extends State<MessageInboxView> {
             ],
           ),
         ),
-        SizedBox(
-          width: 4.w,
-        ),
-        CustomNetworkImage(
-          imageUrl: "", // Use a placeholder image URL if null
-          height: 50.h,
-          width: 50.w,
-          boxShape: BoxShape.circle,
-        ),
+        SizedBox(width: 4.w),
+        Obx(() {
+          final attributes = _allChatsController.allChatsModel.value.data?.attributes;
+          final chat = attributes?.isNotEmpty == true
+              ? attributes!.firstWhere((chat) => chat.sId == chatId, orElse: () => attributes.first)
+              : null;
+          final profileImage = chat?.receiverId?.profileImage ?? '';
+
+          return CustomNetworkImage(
+            imageUrl: "${ApiConstants.imageBaseUrl}$profileImage",
+            height: 50.h,
+            width: 50.w,
+            boxShape: BoxShape.circle,
+          );
+        }),
       ],
     );
   }
 
-  /// Receive Massage bubble
-  receiverBubble(BuildContext context) {
+  // Receiver Message bubble
+  Widget receiverBubble(BuildContext context, MessageContent message) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        CustomNetworkImage(
-          imageUrl: "", // Use a placeholder image URL if null
-          height: 50.h,
-          width: 50.w,
-          boxShape: BoxShape.circle,
-        ),
+        Obx(() {
+          final attributes = _allChatsController.allChatsModel.value.data?.attributes;
+          final chat = attributes?.isNotEmpty == true
+              ? attributes!.firstWhere((chat) => chat.sId == chatId, orElse: () => attributes.first)
+              : null;
+          final profileImage = chat?.senderId?.profileImage ?? '';
+
+          return CustomNetworkImage(
+            imageUrl: "${ApiConstants.imageBaseUrl}$profileImage",
+            height: 50.h,
+            width: 50.w,
+            boxShape: BoxShape.circle,
+          );
+        }),
         SizedBox(width: 4.w),
         Expanded(
           child: Column(
@@ -372,7 +376,6 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                 clipper: ChatBubbleClipper3(
                   type: BubbleType.receiverBubble,
                 ),
-                //alignment: Alignment.topLeft,
                 margin: EdgeInsets.only(top: 20.h, bottom: 20.h),
                 backGroundColor: AppColors.primaryColor.withOpacity(0.3),
                 elevation: 0,
@@ -383,25 +386,8 @@ class _MessageInboxViewState extends State<MessageInboxView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      ///========show message===
-                      showMessage(),
+                      showMessage(message),
                       verticalSpacing(6.h),
-                      SizedBox(
-                        width: 150.w,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            InkWell(
-                              onTap: () {},
-                              child: Icon(
-                                Icons.download,
-                                color: Colors.black54,
-                                size: 20.sp,
-                              ),
-                            )
-                          ],
-                        ),
-                      )
                     ],
                   ),
                 ),
@@ -420,21 +406,23 @@ class _MessageInboxViewState extends State<MessageInboxView> {
     );
   }
 
-  Widget showMessage() {
-    if ('image' == 'image') {
+  Widget showMessage(MessageContent message) {
+    if (message.messageType == 'image' && message.fileUrls != null && message.fileUrls!.isNotEmpty) {
       return CustomNetworkImage(
-        imageUrl: AppNetworkImage.cabinet4Img,
+        imageUrl: "${ApiConstants.imageBaseUrl}${message.fileUrls!.first}",
         height: 120.h,
         width: 150.w,
         boxShape: BoxShape.rectangle,
       );
-    } else if ('text' == 'text') {
-      return Text('',
+    }
+    if (message.messageType == 'text' && message.text != null) {
+      return Text(
+        message.text!,
         style: const TextStyle(color: Colors.white),
         textAlign: TextAlign.start,
       );
     } else {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
   }
 }

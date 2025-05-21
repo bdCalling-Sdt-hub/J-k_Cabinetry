@@ -317,6 +317,8 @@ class CheckoutView extends StatelessWidget {
                 ],
               ),
               verticalSpacing(15.h),
+
+              /// Total Price
               Obx(() {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -333,19 +335,25 @@ class CheckoutView extends StatelessWidget {
                 );
               }),
               verticalSpacing(15.h),
+
+              /// The call to action button at the bottom of the checkout page - [Complete Order/Pay Now] Button
               Obx(() {
                 return CustomButton(
                   loading: _paymentController.isLoading.value,
                     onTap: () async {
+                    // if online payment option is selected, make the stripe payment
                       if (_cartController.isOnlinePayment.value) {
                         await _paymentController.makePayment(
                             amount: '${_cartController.inTotal.value}',
                             currency: 'USD',
                             subscriptionId: 'shuvoJk52',
-                            subscriberId: 'shuvoJk52');
-                      }else{
-                        Get.toNamed(Routes.CASH_PAYMENT_PROCESS);
+                            subscriberId: 'shuvoJk52',
+                        );
+                      }else{ // otherwise, this is a COD type delivery so navigate to the next page...
+                        _paymentController.handleCashPayment();
+                        // Get.toNamed(Routes.CASH_PAYMENT_PROCESS);
                       }
+                      // _paymentController.handleCashPayment();
                     },
                     text: _cartController.isOnlinePayment.value
                         ? 'Pay Now'

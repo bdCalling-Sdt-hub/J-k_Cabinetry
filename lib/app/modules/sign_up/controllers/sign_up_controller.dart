@@ -5,11 +5,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http_parser/http_parser.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
+import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:mime/mime.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../data/services/branch_service.dart';
+import '../../home/model/branch_model.dart';
 
 
 class SignUpController extends GetxController {
@@ -38,11 +42,16 @@ class SignUpController extends GetxController {
   RxBool isLoading = false.obs;
   RxString errorMessage = ''.obs;
 
-  // State and agency selection
+  // State and branch selection
   RxString? state = "".obs;
-  RxString? agency = "".obs;
   List<String> stateList = ["State1", "State2", "State3"]; // Example
-  List<String> agencyList = ["Agency1", "Agency2", "Agency3"]; // Example
+
+  RxString? branch = "".obs;
+  RxString selectedBranchId = ''.obs;
+  // final Rx<Map<String, dynamic>?> selectedBranch = Rx<Map<String, dynamic>?>(null);
+  // RxList<String> branchList = <String>[].obs;
+  Rxn<BranchData> selectedBranch = Rxn<BranchData>();   // Store selected branch object
+  RxList<BranchData> branchList = <BranchData>[].obs;  // List of BranchData objects
 
   RxBool showroom = false.obs;
   final RxBool builder = false.obs;
@@ -52,6 +61,40 @@ class SignUpController extends GetxController {
 
   List<String> selectedRoles = [];
 
+  @override
+  void onInit() {
+    super.onInit();
+    fetchBranch();
+  }
+
+  // Fetch branches from API
+  Future<void> fetchBranch() async {
+    isLoading.value = true;
+    try {
+      final branchService = Get.find<BranchService>();
+      final branches = await branchService.getBranches();
+      if (branches.data != null) {
+        branchList.clear();
+        branchList.addAll(branches.data!);
+      }
+    } on SocketException catch (_) {
+      Get.snackbar(
+        'Error',
+        'No internet connection. Please check your network and try again.',
+        snackPosition: SnackPosition.TOP,
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again later.',
+        snackPosition: SnackPosition.TOP,
+      );
+      print(e);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // API Call to perform sign-up
   Future<void> signUp() async {
     isLoading.value = true;
@@ -60,7 +103,7 @@ class SignUpController extends GetxController {
       String token = await PrefsHelper.getString(AppConstants.signInToken);
 
       Map<String, String> headers = {
-        //'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token',
         'Content-Type': 'multipart/form-data',
       };
 
@@ -78,13 +121,14 @@ class SignUpController extends GetxController {
         "password": passwordCtrl.text.trim(),
         "confirmPassword": confirmPasswordCtrl.text.trim(),
         "state": state?.value ?? '',
-        "selectYourAgency": agency?.value ?? '',
+        "selectYourAgency": branch?.value ?? '',
         "showroom": showroom.value.toString(),
         "builder": builder.value.toString(),
         "designer": designer.value.toString(),
         "contractor": contractor.value.toString(),
         "dealer": dealer.value.toString(),
-        "branch": 'West Coast Branch',
+        "branch": selectedBranch.value?.name ?? '',/// todo: fix this
+        "branchID": selectedBranch.value?.sId ?? '',
         "role": 'user'
       };
 
@@ -109,6 +153,7 @@ class SignUpController extends GetxController {
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', decodedBody['message']);
+        Get.toNamed(Routes.SIGN_IN);
         // Navigate to the next page or perform any other actions
       } else {
         Get.snackbar('Error', decodedBody['message']);
@@ -130,6 +175,7 @@ class SignUpController extends GetxController {
       isLoading.value = false;
     }
   }
+
 
   // Helper function to upload images
   void imageForUpload(File? selectedImage, http.MultipartRequest request, {required String fileKey}) {

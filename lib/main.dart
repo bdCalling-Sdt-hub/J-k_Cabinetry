@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:jk_cabinet/sk_key.dart';
 
+import 'app/data/services/branch_service.dart';
 import 'app/routes/app_pages.dart';
 import 'common/app_constant/app_constant.dart';
 import 'common/controller/localization_controller.dart';
@@ -18,6 +20,8 @@ import 'common/widgets/message.dart';
 String token = '';
 
 void main() async {
+  Get.put(BranchService());
+  await GetStorage.init();
   WidgetsFlutterBinding.ensureInitialized();
   Stripe.publishableKey = SKey.sPubTestKey;
   Map<String, Map<String, String>> _languages = await init();

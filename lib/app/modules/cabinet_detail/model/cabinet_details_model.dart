@@ -25,10 +25,11 @@ class CabinetDetailsModel {
 
 class Data {
   String? sId;
-  String? title;
-  String? subTitle;
+  String? code;
+  String? colorName;
   String? description;
   String? categoryId;
+  String? branchId;
   String? branchName;
   String? imageUrl;
   String? createdAt;
@@ -37,10 +38,11 @@ class Data {
 
   Data(
       {this.sId,
-        this.title,
-        this.subTitle,
+        this.code,
+        this.colorName,
         this.description,
         this.categoryId,
+        this.branchId,
         this.branchName,
         this.imageUrl,
         this.createdAt,
@@ -49,10 +51,11 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
-    title = json['title'];
-    subTitle = json['subTitle'];
+    code = json['code'];
+    colorName = json['colorName'];
     description = json['description'];
     categoryId = json['categoryId'];
+    branchId = json['branchId'];
     branchName = json['branchName'];
     imageUrl = json['imageUrl'];
     createdAt = json['createdAt'];
@@ -63,10 +66,11 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = sId;
-    data['title'] = title;
-    data['subTitle'] = subTitle;
+    data['code'] = code;
+    data['colorName'] = colorName;
     data['description'] = description;
     data['categoryId'] = categoryId;
+    data['branchId'] = branchId;
     data['branchName'] = branchName;
     data['imageUrl'] = imageUrl;
     data['createdAt'] = createdAt;
@@ -77,16 +81,7 @@ class Data {
 }
 
 
-
-
-
-
-
-
-
-
-
-/// Shuvo vai's version
+// /// Shuvo vai's version
 // class CabinetDetailsModel {
 //   final bool? success;
 //   final String? message;

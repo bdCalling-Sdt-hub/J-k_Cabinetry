@@ -29,7 +29,9 @@ class CabinetryController extends GetxController {
       if (response.statusCode == 200) {
         cabinetryModel.value= CabinetryModel.fromJson(decodedBody['data']);
         print(cabinetryModel.value);
+        print('===========22-bodyyyyyy->> ${response.statusCode}');
       } else {
+        print('===========44-bodyyyyyy->> ${response.statusCode}');
         print('Error: ${response.statusCode}');
         Get.snackbar('Failed', decodedBody['message']);
       }
@@ -40,6 +42,7 @@ class CabinetryController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     } catch (e) {
+
       Get.snackbar(
         'Error',
         'Something went wrong. Please try again later.',

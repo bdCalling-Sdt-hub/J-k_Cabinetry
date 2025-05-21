@@ -48,6 +48,7 @@ dependencies:
   intl:
   image_picker:
   cached_network_image:
+  flutter_cache_manager:
   circle_nav_bar:
   grouped_list:
   flutter_chat_bubble:
@@ -56,6 +57,7 @@ dependencies:
   http:
   mime_type:
   image:
+  flutter_image_compress:
   http_parser:
   path_provider:
   permission_handler:
@@ -72,6 +74,7 @@ dependencies:
   sqflite: ^2.4.2
   path: ^1.9.1
   logger: ^2.5.0
+  get_cli: ^1.9.1
 
 dev_dependencies:
   flutter_test:

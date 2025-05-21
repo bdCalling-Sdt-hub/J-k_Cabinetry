@@ -6,16 +6,27 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
+import 'package:jk_cabinet/app/modules/message_inbox/controllers/message_inbox_controller.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
+import 'package:logger/logger.dart';
+
+import '../model/inbox_history_model.dart';
+
 
 class SendMessageController extends GetxController {
   RxString commentMessage = ''.obs;
   File? selectedIFile;
   var filePath=''.obs;
   RxBool isLoading=false.obs;
-
-  sendMessage(String? message, String filePath,dynamic receiverId,dynamic chatId) async {
-    String token = await PrefsHelper.getString('token');
+  String chatId = Get.arguments['chatId'];
+  final _logger = Logger();
+final MessageInboxController _messageInboxController=Get.put(MessageInboxController());
+  sendMessage(
+      {required String message,
+      String? filePath,
+      required String receiverId,
+        required String chatId}) async {
+    String token = await PrefsHelper.getString('sign-in-token');
     Map<String, String> headers = {
       'Authorization': 'Bearer $token',
       'Content-Type': 'multipart/form-data'
@@ -26,15 +37,15 @@ class SendMessageController extends GetxController {
       'receiverId': receiverId,
     };
 
-    var request =  http.MultipartRequest('POST', Uri.parse(''));
+    var request =  http.MultipartRequest('POST', Uri.parse(ApiConstants.sendMessageUrl));
     request.fields.addAll(body);
 
-    File fileData = File(filePath);
+    File fileData = File(filePath!);
 
     try {
       // Determine file type and add it to the request
       isLoading.value=true;
-      if(fileData.path !=null && fileData.path.isNotEmpty){
+      if(fileData.path.isNotEmpty){
         await _addFileToRequest(request, fileData);
       }
 
@@ -47,10 +58,14 @@ class SendMessageController extends GetxController {
       http.StreamedResponse response = await request.send();
       var responseBody = await response.stream.bytesToString();
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == HttpStatus.ok ||response.statusCode == HttpStatus.created ) {
         var responseData = jsonDecode(responseBody);
         commentMessage.value = responseData['message'];
-        print("Response Success (201): $responseBody");
+        var newMessage = MessageAttributes.fromJson(responseData['data']);
+        _logger.e(newMessage);
+        // _messageInboxController.chatMessages.add(newMessage);
+
+        print("Response Success : $responseBody");
       } else {
         var errorData = jsonDecode(responseBody);
         commentMessage.value = errorData['message'] ?? 'Something went wrong';
