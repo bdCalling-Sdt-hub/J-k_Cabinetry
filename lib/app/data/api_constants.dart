@@ -11,8 +11,7 @@ class ApiConstants{
   static String googleApiKey="AIzaSyBFi80uuJIWkkLCpodFa8oXmD8XD_h8LMc";
 
 
-  ///
-  ///
+
   ///>>>>>>>>>>>>>>>>>>>>>>>>>>> User Auth>>>>>>>>>>>>>>>>>>>---FAHIM
 
   static String logInUrl= '$baseUrl/auth/login';

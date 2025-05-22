@@ -20,6 +20,7 @@ import 'package:jk_cabinet/common/widgets/app_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+import 'package:logger/logger.dart';
 
 import '../../sign_in/controllers/sign_in_controller.dart';
 
@@ -34,19 +35,8 @@ class _CabinetryViewState extends State<CabinetryView> {
   final HomeController homeController = Get.put(HomeController());
   final CabinetryController cabinetryController = Get.put(CabinetryController());
   final SignInController signInController = Get.put(SignInController());
+  final Logger _logger = Logger();
   BranchData? branchData;
-
-  // final List<Map<String, String>> cabinetItems = [
-  //   {"image": AppNetworkImage.cabinet1Img, "price": "\$8", "color": "White"},
-  //   {
-  //     "image": AppNetworkImage.cabinet2Img,
-  //     "price": "\$5",
-  //     "color": "Castle Grey"
-  //   },
-  //   {"image": AppNetworkImage.cabinet3Img, "price": "\$8", "color": "White"},
-  //   {"image": AppNetworkImage.cabinet4Img, "price": "\$8", "color": "White"},
-  // ];
-
 
   @override
   void initState() {
@@ -65,10 +55,8 @@ class _CabinetryViewState extends State<CabinetryView> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomMenu(1),
-      appBar: CustomAppBarTitle(
+      appBar: const CustomAppBarTitle(
         isShowChat: true,
-        chatOnTap: () {},
-        notificationCount: '40',
       ),
       drawer: const AppDrawer(),
       resizeToAvoidBottomInset: true,
@@ -156,9 +144,10 @@ class _CabinetryViewState extends State<CabinetryView> {
                                         Get.toNamed(Routes.SHOP_ACCESS);
                                       } else {
                                         final profileController = Get.put(ProfileController());
+                                        await profileController.fetchProfileData();
                                         final isVerified = profileController.profileModel.value.data?.isverified ?? false;
                                         if (isVerified) {
-                                          print('cabinetId :$selectedCabinetId');
+                                          _logger.i('cabinetId :$selectedCabinetId');
                                           Get.toNamed(Routes.CABINET_DETAIL, arguments: {'cabinetId': selectedCabinetId});
                                         } else {
                                           print('cabinetId :$selectedCabinetId');

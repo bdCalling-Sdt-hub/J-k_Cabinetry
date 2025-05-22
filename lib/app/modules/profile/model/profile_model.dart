@@ -59,6 +59,8 @@ class ProfileData {
   String? updatedAt;
   int? iV;
   String? profileImage;
+  bool? isTax;
+  int? branchTax;
 
   ProfileData(
       {this.sId,
@@ -94,6 +96,8 @@ class ProfileData {
         this.updatedAt,
         this.iV,
         this.profileImage,
+        this.isTax,
+        this.branchTax,
       });
 
   ProfileData.fromJson(Map<String, dynamic> json) {
@@ -130,6 +134,8 @@ class ProfileData {
     updatedAt = json['updatedAt'];
     iV = json['__v'];
     profileImage = json['profileImage'];
+    isTax = json['isTax'];
+    branchTax = json['branchTax'];
   }
 
   Map<String, dynamic> toJson() {
@@ -167,6 +173,8 @@ class ProfileData {
     data['updatedAt'] = updatedAt;
     data['__v'] = iV;
     data['profileImage'] = profileImage;
+    data['isTax'] = isTax;
+    data['branchTax'] = branchTax;
     return data;
   }
 }

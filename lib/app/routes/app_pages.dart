@@ -139,7 +139,7 @@ class AppPages {
         transition: Transition.noTransition),
     GetPage(
         name: _Paths.CASH_PAYMENT_PROCESS,
-        page: () => CashPaymentProcessView(),
+        page: () => const CashPaymentProcessView(),
         binding: CashPaymentProcessBinding(),
         transition: Transition.noTransition),
     GetPage(

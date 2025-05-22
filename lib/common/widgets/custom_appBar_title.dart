@@ -12,8 +12,8 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.backgroundColor,
     this.textColor,
-    this.notificationCount,
-    this.chatOnTap,
+    // this.notificationCount,
+    // this.chatOnTap,
     this.isShowChat = false,
     this.text,
     this.isShowText = false,
@@ -22,8 +22,8 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
 
   final Color? backgroundColor;
   final Color? textColor;
-  final String? notificationCount;
-  final VoidCallback? chatOnTap;
+  // final String? notificationCount;
+  // final VoidCallback? chatOnTap;
   final bool isShowChat;
   final bool isShowText;
   final String? text;
@@ -32,6 +32,8 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+        // automaticallyImplyLeading: true,
+        // onLeadingPressed: () => Get.back(),
       backgroundColor: backgroundColor ?? Colors.white,
       title: isShowText
           ? Text(
@@ -56,9 +58,9 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
                     height: 40.h,
                   ),
                 ),
-              if (isShowChat &&
-                  notificationCount != null &&
-                  notificationCount!.isNotEmpty)
+              // if (isShowChat &&
+              //     notificationCount != null &&
+              //     notificationCount!.isNotEmpty)
                 Positioned(
                   top: 0,
                   right: 0,
@@ -68,7 +70,7 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
                     child: Padding(
                       padding: EdgeInsets.all(1.0.sp),
                       child: Text(
-                        notificationCount ?? '',
+                        '',
                         style: AppStyles.h6(color: Colors.white),
                       ),
                     ),

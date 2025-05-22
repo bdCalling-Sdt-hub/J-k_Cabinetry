@@ -39,13 +39,13 @@ class _AllChatsViewState extends State<AllChatsView> {
           children: [
             /// Search
             verticalSpacing(12.h),
-            CustomSearchField(
-              searchCtrl: searchCtrl,
-              iconOnTap: () {},
-              onChanged: (value) {},
-              suffixIcon: Icons.tune,
-              fillColor: AppColors.primaryColor.withOpacity(0.1),
-            ),
+            // CustomSearchField(
+            //   searchCtrl: searchCtrl,
+            //   iconOnTap: () {},
+            //   onChanged: (value) {},
+            //   suffixIcon: Icons.tune,
+            //   fillColor: AppColors.primaryColor.withOpacity(0.1),
+            // ),
 
             /// Friend List
             verticalSpacing(16.h),

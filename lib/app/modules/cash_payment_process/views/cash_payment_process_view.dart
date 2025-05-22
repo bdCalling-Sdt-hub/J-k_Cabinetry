@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_common/get_reset.dart';
-import 'package:jk_cabinet/app/modules/cart/models/payment_response_model.dart';
-import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
-import 'package:jk_cabinet/app/modules/profile/model/profile_model.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
@@ -15,8 +11,16 @@ import '../../cart/controllers/make_payment_controller.dart';
 import '../../profile/controllers/profile_controller.dart';
 
 
-class CashPaymentProcessView extends StatelessWidget {
+class CashPaymentProcessView extends StatefulWidget {
+  const CashPaymentProcessView({super.key});
+
+  @override
+  State<CashPaymentProcessView> createState() => _CashPaymentProcessViewState();
+}
+
+class _CashPaymentProcessViewState extends State<CashPaymentProcessView> {
   final ProfileController _profileController = Get.put(ProfileController());
+
   final PaymentController _paymentController = Get.put(PaymentController());
 
   @override

@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/modules/cart/models/cart_item_model.dart';
 import 'package:jk_cabinet/app/modules/cart/views/cart_view.dart';
+import 'package:jk_cabinet/app/modules/profile/controllers/profile_controller.dart';
+import 'package:jk_cabinet/app/modules/profile/model/profile_model.dart';
 import 'package:jk_cabinet/common/helper/logger_helper.dart';
 import 'package:jk_cabinet/common/helper/sql_helper.dart';
 
@@ -17,7 +19,7 @@ class CartController extends GetxController {
   TextEditingController cityCtrl = TextEditingController();
   TextEditingController stateCtrl = TextEditingController();
   TextEditingController zipCodeCtrl = TextEditingController();
- // final PaymentController _paymentController=Get.put(PaymentController());
+ final ProfileController _profileController = Get.put(ProfileController());
 
   RxList<CartItem> cartItems = <CartItem>[].obs;
   RxBool isShip= true.obs;
@@ -27,15 +29,18 @@ class CartController extends GetxController {
   RxBool isExistingBillingAddress= true.obs;
   RxBool isNewBillingAddress= false.obs;
  RxDouble shippingCost = 10.01.obs;
- RxDouble salesTax = 0.06.obs;
+ // RxDouble salesTax = 0.06.obs;
+   late RxInt salesTax;
+
 
   final DatabaseHelper _dbHelper = DatabaseHelper(dbName: 'jk_cabinet.db');
   final String _cartTable = 'cart_items';
 
-
   @override
   void onInit() {
     super.onInit();
+    final tax = (_profileController.profileModel.value.data?.branchTax ?? 0).obs;
+    salesTax = ((tax * subtotal.value / 100).round()).obs;
     loadCartItems();
     WidgetsBinding.instance.addPostFrameCallback((__){
       // cartItems.addAll([
@@ -280,9 +285,19 @@ class CartController extends GetxController {
     }
   }
 
+
+
   ///sub-total
   RxDouble get subtotal => ( cartItems.fold(0.0, (sum, item) => sum + item.totalPrice) + (isShip.value ? 10.0 : 0.0)  ).obs;
-  RxDouble get inTotal=> ((salesTax * subtotal.value) + subtotal.value).obs;
+  // RxDouble get inTotal => ((_profileController.profileModel.value.data?.branchTax ?? 0.0) * subtotal.value + subtotal.value).obs;
+  // RxDouble get inTotal=> ((_profileController.profileModel.value.data?.branchTax ?? 0 /* * subtotal.value*/ ) + subtotal.value).obs;
+  // RxDouble get inTotal=> (salesTax.value + subtotal.value).obs;
+
+  RxDouble get inTotal {
+    final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+    final isTax = _profileController.profileModel.value.data?.isTax ?? false;
+    return (subtotal.value + ((isTax ? tax : 0) * subtotal.value / 100)).obs;
+  }
 
   // RxDouble get subtotal {
   //   double sum = 0.0;

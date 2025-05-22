@@ -13,6 +13,7 @@ import 'package:jk_cabinet/app/modules/home/widgets/faq_section.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/footer.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/video_section.dart';
+import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
@@ -43,24 +44,42 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((__)async{
       await homeController.fetchBranch();
-      final ProfileController _profileController = Get.put(ProfileController());
-_profileController.verifyLoading.value;
-      _showBranchSelectionDialog(context);
+      final ProfileController profileController = Get.put(ProfileController());
+      profileController.verifyLoading.value;
+
+      // CHANGED: Removed automatic dialog showing
+      // Instead, check if branch is already selected from previous session
+      await _checkExistingBranchSelection();
     });
+  }
+
+  // ADDED: Method to check if user has previously selected a branch
+  Future<void> _checkExistingBranchSelection() async {
+    final branchData = await homeController.saveBranchInfo();
+    if (branchData.youtubeLink != null) {
+      await getVideo();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomMenu(0),
-      appBar: CustomAppBarTitle(
-        isShowChat: true, chatOnTap: () {}, notificationCount: '40',),
+      appBar: const CustomAppBarTitle(
+          isShowChat: true),
       drawer: const AppDrawer(),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Obx((){
-              return TopBarContactInfo(branchData: homeController.selectedBranch.value,);
+            // CHANGED: Conditionally show either TopBarContactInfo or action buttons
+            Obx(() {
+              // Show TopBarContactInfo if branch is selected, otherwise show action buttons
+              if (homeController.selectedBranch.value != null &&
+                  homeController.selectedBranch.value.name != null) {
+                return TopBarContactInfo(branchData: homeController.selectedBranch.value!);
+              } else {
+                return _buildActionButtons();
+              }
             }),
             verticalSpacing(16.h),
             const BannerSection(),
@@ -93,9 +112,71 @@ _profileController.verifyLoading.value;
     );
   }
 
+  // ADDED: Widget to build the action buttons (Change Branch & Login/Registration)
+  Widget _buildActionButtons() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      color: Colors.grey.shade100,
+      child: Row(
+        children: [
+          // Change Branch Button
+          Expanded(
+            child: OutlinedButton(
+              onPressed: () {
+                // Show branch selection dialog when user taps Change Branch
+                _showBranchSelectionDialog(context);
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: AppColors.primaryColor, width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+              ),
+              child: Text(
+                'Select Branch',
+                style: TextStyle(
+                  color: AppColors.primaryColor,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          // Login/Registration Button
+          Expanded(
+            child: ElevatedButton(
+              onPressed: () {
+                Get.toNamed(Routes.SIGN_IN);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 12.h),
+              ),
+              child: Text(
+                'Login/Registration',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // CHANGED: Modified to be called only when user manually selects "Change Branch"
   void _showBranchSelectionDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: true, // ADDED: Allow dismissing by tapping outside
       builder: (BuildContext context) {
         return StatefulBuilder(
           builder: (context, setState) {
@@ -157,10 +238,35 @@ _profileController.verifyLoading.value;
                 ),
               ),
               actions: [
+                // ADDED: Cancel button to allow dismissing without selection
+                TextButton(
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
                 CustomButton(
                   onTap: () async {
-                    await getVideo();
-                    Get.back();
+                    // CHANGED: Only proceed if a branch is actually selected
+                    if (homeController.selectedBranch.value != null) {
+                      await getVideo();
+                      Get.back();
+                    } else {
+                      // Show snackbar or toast if no branch selected
+                      Get.snackbar(
+                        'Branch Required',
+                        'Please select a branch to continue',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: Colors.red.shade100,
+                        colorText: Colors.red.shade800,
+                      );
+                    }
                   },
                   text: 'Explore',
                 ),
@@ -171,6 +277,7 @@ _profileController.verifyLoading.value;
       },
     );
   }
+
   /// Get video data from branch info
   getVideo()async{
     final branchData = await homeController.saveBranchInfo();
@@ -184,4 +291,3 @@ _profileController.verifyLoading.value;
     }
   }
 }
-

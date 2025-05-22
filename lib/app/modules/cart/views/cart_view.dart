@@ -23,6 +23,8 @@ import 'package:path_provider/path_provider.dart';
 import '../controllers/cart_controller.dart';
 
 class CartView extends StatefulWidget {
+  const CartView({super.key});
+
   @override
   State<CartView> createState() => _CartViewState();
 }
@@ -92,10 +94,8 @@ class _CartViewState extends State<CartView> {
   Widget build(BuildContext context) {
     return Scaffold(
       bottomNavigationBar: const BottomMenu(2),
-      appBar: CustomAppBarTitle(
+      appBar: const CustomAppBarTitle(
         isShowChat: true,
-        chatOnTap: () {},
-        notificationCount: '40',
       ),
       drawer: const AppDrawer(),
       body: Padding(
@@ -292,12 +292,27 @@ class _CartViewState extends State<CartView> {
                 }),
               ),
               verticalSpacing(12.h),
-              CustomButton(
-                onTap: () {
-                  Get.toNamed(Routes.CHECKOUT);
-                },
-                text: 'CheckOut',
-              ),
+            // Obx(() => CustomButton(
+            //   onTap: cartController.cartItems.isEmpty
+            //       ? null
+            //       : () async => await Get.toNamed(Routes.CHECKOUT),
+            //   text: 'CheckOut',
+            //   disabled: cartController.cartItems.isEmpty,
+            // )),
+
+              Obx(() {
+                return cartController.cartItems.isNotEmpty
+                    ? CustomButton(
+                        onTap: () {
+                          Get.toNamed(Routes.CHECKOUT);
+                        },
+                        text: 'Checkout')
+                    : CustomButton(
+                        onTap: () {},
+                        text: 'Checkout',
+                        color: Colors.grey,
+                      );
+              }),
               verticalSpacing(16.h),
             ],
           ),

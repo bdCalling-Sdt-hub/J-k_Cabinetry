@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
@@ -38,10 +39,27 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
 
   // helper function to strip HTML tags
   String _stripHtmlTags(String htmlString) {
-    return htmlString.replaceAll(RegExp(r'<[^>]*>'), '');
+    // Replace common HTML entities
+    var withoutEntities = htmlString
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"');
+
+    // Replace block-level elements with newlines
+    var withLineBreaks = withoutEntities
+      .replaceAll(RegExp(r'<(div|p|br|h[1-6])[^>]*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</(div|p|h[1-6])>', caseSensitive: false), '\n');
+
+    // Remove all remaining HTML tags
+    var withoutTags = withLineBreaks.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Clean up excessive whitespace
+    return withoutTags
+      .replaceAll(RegExp(r'\n\s*\n'), '\n\n')
+      .trim();
   }
-
-
 
   @override
   void initState() {
@@ -58,10 +76,8 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(
+      appBar: const CustomAppBarTitle(
         isShowChat: true,
-        chatOnTap: () {},
-        notificationCount: '40',
       ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -94,13 +110,16 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
 
 
               // Product Description
-              Text(
-                _cabinetDetailController
-                            .cabinetDetailsModel.value.data?.description !=
-                        null
-                    ? _stripHtmlTags(_cabinetDetailController
-                        .cabinetDetailsModel.value.data!.description!)
-                    : 'Description',
+              Html(
+                data: _cabinetDetailController
+                    .cabinetDetailsModel.value.data?.description ?? 'Description',
+                style: {
+                  "body": Style(
+                    fontSize: FontSize(14),
+                    margin: Margins.zero,
+                    padding: HtmlPaddings.zero,
+                  ),
+                },
               ),
               SizedBox(height: 15.h),
               Obx(() {
@@ -159,8 +178,7 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
           ),
         ),
       ),
-      /// todo: fix the fab button
-      // floatingActionButton: const CustomCartFloatingButton(),
+      floatingActionButton: const CustomCartFloatingButton(),
     );
   }
 }

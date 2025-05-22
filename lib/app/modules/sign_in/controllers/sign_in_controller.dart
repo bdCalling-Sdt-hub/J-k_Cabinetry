@@ -82,8 +82,8 @@ class SignInController extends GetxController {
 
   @override
   void onClose() {
-    emailCtrl.dispose();
-    passCtrl.dispose();
+    emailCtrl.clear();
+    passCtrl.clear();
     super.onClose();
   }
 }

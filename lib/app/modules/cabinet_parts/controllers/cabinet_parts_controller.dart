@@ -6,6 +6,7 @@ import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:logger/logger.dart';
 import '../../../data/api_constants.dart';
 import '../../cabinet_detail/model/cabinet_details_model.dart';
+import '../../cabinet_detail/model/cabinet_parts_model.dart';
 import '../models/single_part_model.dart';
 
 class CabinetPartsController extends GetxController {
@@ -28,7 +29,7 @@ class CabinetPartsController extends GetxController {
   @override
   void onInit(){
     super.onInit();
-    productImages.addAll(singlePartDetailsModel.value.data?.images ?? []);
+    // productImages.addAll(singlePartDetailsModel.value.data?.images ?? []);
   }
 
   void increment() {
@@ -61,6 +62,7 @@ class CabinetPartsController extends GetxController {
 
       if (response.statusCode == 200) {
         singlePartDetailsModel.value = SinglePartModel.fromJson(decodedBody);
+        productImages.addAll(singlePartDetailsModel.value.data?.images ?? []);
         update();
       } else {
         print('Error: ${response.statusCode}');

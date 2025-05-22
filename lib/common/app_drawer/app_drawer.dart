@@ -205,7 +205,7 @@ class _AppDrawerState extends State<AppDrawer> {
                       await PrefsHelper.remove(AppConstants.userId);
                       PrefsHelper.remove('user_verification_status');
                       await _cartController.clearCart();
-                      Get.toNamed(Routes.SIGN_IN);
+                      Get.offAllNamed(Routes.SIGN_IN);
                     },
                   ),
                 ],

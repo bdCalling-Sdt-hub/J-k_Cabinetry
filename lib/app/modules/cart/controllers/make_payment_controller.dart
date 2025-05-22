@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
 import 'package:jk_cabinet/app/modules/cart/models/payment_response_model.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
+import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
@@ -153,7 +154,7 @@ class PaymentController extends GetxController{
       Map<String, dynamic> stripeResponseData,
       String subscriberId,
       ) async {
-    String userToken = await PrefsHelper.getString('token');
+    String userToken = await PrefsHelper.getString(AppConstants.signInToken);
     print('Stripe response data===========: $stripeResponseData');
     _logger.i('''
     Payment Transaction Details====>>>
@@ -178,6 +179,13 @@ class PaymentController extends GetxController{
       "state": userData?.state,
       "zipCode": userData?.zipCode,
       "isBillingSame": true,
+      "paymentData" : [
+        {
+          "stripPaymentId" : transactionId,
+          "amount" : amountInCent,
+          "currency": stripeResponseData['currency'] ?? 'usd'
+        }
+      ],
       "products": _cartController.cartItems.map((item) => {
         "name": item.name,
         "quantity": item.quantity,
@@ -200,6 +208,13 @@ class PaymentController extends GetxController{
       "state": _cartController.stateCtrl.text,
       "zipCode": _cartController.zipCodeCtrl.text,
       "isBillingSame": false,
+      "paymentData" : [
+        {
+          "stripPaymentId" : transactionId,
+          "amount" : amountInCent,
+          "currency": stripeResponseData['currency'] ?? 'usd'
+        }
+      ],
       "products": _cartController.cartItems.map((item) => {
         "name": item.name,
         "quantity": item.quantity,
@@ -225,7 +240,8 @@ class PaymentController extends GetxController{
     var responseBody = jsonDecode(request.body);
     if (request.statusCode == 200) {
       // paymentResponseModel.value = PaymentResponseModel.fromJson(responseBody);
-      print("Payment response: $responseBody");
+      _logger.i("Payment response: $responseBody");
+      await _cartController.clearCart();
       Get.dialog(
         barrierDismissible: true,
         AlertDialog(
@@ -318,6 +334,7 @@ class PaymentController extends GetxController{
     if (request.statusCode == 200 || request.statusCode == 201) {
       paymentResponseModel.value = PaymentResponseModel.fromJson(responseBody);
       _logger.i("Payment response: $responseBody");
+      await _cartController.clearCart();
       // Get.toNamed(Routes.INVOICE);
       Get.toNamed(Routes.CASH_PAYMENT_PROCESS);
       // Get.dialog(

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
+import 'package:jk_cabinet/app/modules/cabinet_detail/model/cabinet_parts_model.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/cabinet_parts_controller.dart';
-import 'package:jk_cabinet/app/modules/cabinet_parts/widgets/recently_viewed.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_constant/app_constant.dart';
@@ -24,11 +24,11 @@ class CabinetPartsView extends StatefulWidget {
 }
 
 class _CabinetPartsViewState extends State<CabinetPartsView> {
-  // final CabinetPartsController _cabinetPartsController = Get.put(CabinetPartsController());
   final CabinetPartsController _cabinetPartsController = Get.find<CabinetPartsController>();
 
   final CabinetDetailController _cabinetDetailController = Get.find<CabinetDetailController>();
   var x = 0;
+  final Part parts = Part();
 
   @override
   void initState() {
@@ -65,10 +65,12 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                         decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey),
                         ),
-                        child: Image.network(
-                          // '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.productImages[_cabinetPartsController.selectedImageIndex.value]}',
-                          '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.productImages[0]}',
-                          fit: BoxFit.contain,
+                        child: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null &&
+                            _cabinetPartsController.singlePartDetailsModel.value.data!.images!.isNotEmpty ? Image.network(
+                          '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data?.images?[_cabinetPartsController.selectedImageIndex.value]}',
+                          fit: BoxFit.cover,
+                        ): Center(
+                          child: Icon(Icons.image, size: 40.sp, color: Colors.grey),
                         ),
                       ),
                     );
@@ -95,16 +97,12 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                   }
                   return Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(_cabinetPartsController.productImages.length,
+                    children: List.generate(_cabinetPartsController.singlePartDetailsModel.value.data?.images?.length ?? 0,
                       (index) {
                         return GestureDetector(
                           onTap: () {
-                            setState(
-                              () {
                                 _cabinetPartsController
                                     .selectedImageIndex.value = index;
-                              },
-                            );
                           },
                           child: Container(
                             margin: EdgeInsets.symmetric(horizontal: 4.w),
@@ -117,10 +115,10 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                                     : Colors.grey,
                               ),
                             ),
-                            child: Image.network(
-                              _cabinetPartsController.productImages[index],
+                            child: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null ? Image.network(
+                              '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data?.images?[index]}',
                               fit: BoxFit.contain,
-                            ),
+                            ) : const Icon(Icons.image),
                           ),
                         );
                       },
@@ -205,7 +203,7 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                           quantity: partsController.quantity.value,
                           productImg: part.images != null &&
                                   part.images!.isNotEmpty
-                              ? '${ApiConstants.imageBaseUrl}${part.images?.first}'
+                              ? '${ApiConstants.imageBaseUrl}/${part.images?.first}'
                               : AppConstants.demoImage,
                         );
 
@@ -226,9 +224,11 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
               Divider(
                 color: Colors.grey.shade400,
               ),
-              RecentlyViewed(
-                key: widget.key,
-              )
+
+              // todo: implement this [Recently Viewed] feature if possible
+              // RecentlyViewed(
+              //   key: widget.key,
+              // ),
             ],
           ),
         ),
@@ -243,8 +243,8 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
         builder: (context) {
           return AlertDialog(
             //backgroundColor: Colors.transparent,
-            title: Image.network(
-                _cabinetPartsController.productImages[imageIndex]),
+            title: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null ? Image.network(
+                '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data!.images![imageIndex]}') : const Icon(Icons.image),
             actions: [
               TextButton(
                 onPressed: () {

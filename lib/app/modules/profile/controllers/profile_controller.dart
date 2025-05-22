@@ -21,6 +21,10 @@ class ProfileController extends GetxController {
     fetchProfileData();
   }
 
+  void clearProfileData() {
+
+  }
+
   Future pickImageFromCamera(ImageSource source) async {
     final returnImage = await ImagePicker().pickImage(source: source);
     if (returnImage == null) return;
