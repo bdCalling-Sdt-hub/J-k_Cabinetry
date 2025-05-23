@@ -57,7 +57,8 @@ class ProfileView extends StatelessWidget {
                             ),
                           );
                         }
-                        return CircleAvatar(
+                        else {
+                          return CircleAvatar(
                           radius: 60.r,
                           backgroundColor: Colors.grey,
                           child: const Icon(
@@ -65,6 +66,7 @@ class ProfileView extends StatelessWidget {
                             size: 20,
                           ),
                         );
+                        }
                       },
                     ),
                     horizontalSpacing(14.w),

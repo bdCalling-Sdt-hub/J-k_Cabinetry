@@ -102,6 +102,7 @@ class Part {
   String? title;
   String? subTitle;
   double? price;
+  double? dealerPrice;
   String? description;
   List<dynamic>? images;
   String? stockItemCategoryId;
@@ -110,32 +111,34 @@ class Part {
   String? branchId;
 
   Part({
-    this.id,
-    this.title,
-    this.subTitle,
-    this.price,
-    this.description,
-    this.images,
-    this.stockItemCategoryId,
-    this.stockItemId,
-    this.branchName,
-    this.branchId,
-  });
+      this.id,
+      this.title,
+      this.subTitle,
+      this.price,
+      this.dealerPrice,
+      this.description,
+      this.images,
+      this.stockItemCategoryId,
+      this.stockItemId,
+      this.branchName,
+      this.branchId,
+    });
 
   factory Part.fromJson(Map<String, dynamic> json) {
-    return Part(
-      id: json['_id'] as String?,
-      title: json['title'] as String?,
-      subTitle: json['subTitle'] as String?,
-      price: _toDouble(json['price']),
-      description: json['description'] as String?,
-      images: json['images'] as List<dynamic>?,
-      stockItemCategoryId: json['stockItemCategoryId'] as String?,
-      stockItemId: json['stockItemId'] as String?,
-      branchName: json['branchName'] as String?,
-      branchId: json['branchId'] as String?,
-    );
-  }
+      return Part(
+        id: json['_id'] as String?,
+        title: json['title'] as String?,
+        subTitle: json['subTitle'] as String?,
+        price: _toDouble(json['price']),
+        dealerPrice: _toDouble(json['dealerPrice']),
+        description: json['description'] as String?,
+        images: json['images'] as List<dynamic>?,
+        stockItemCategoryId: json['stockItemCategoryId'] as String?,
+        stockItemId: json['stockItemId'] as String?,
+        branchName: json['branchName'] as String?,
+        branchId: json['branchId'] as String?,
+      );
+    }
 
   static double? _toDouble(dynamic value) {
     if (value == null) return null;

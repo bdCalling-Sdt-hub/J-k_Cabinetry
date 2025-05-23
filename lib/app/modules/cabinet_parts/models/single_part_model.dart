@@ -36,21 +36,23 @@ class SinglePartData {
   String? createdAt;
   String? updatedAt;
   num? iV;
+  num? dealerPrice;
 
   SinglePartData(
       {this.sId,
-        this.images,
-        this.title,
-        this.subTitle,
-        this.description,
-        this.price,
-        this.stockItemCategoryId,
-        this.stockItemId,
-        this.branchName,
-        this.branchId,
-        this.createdAt,
-        this.updatedAt,
-        this.iV});
+      this.images,
+      this.title,
+      this.subTitle,
+      this.description,
+      this.price,
+      this.dealerPrice,
+      this.stockItemCategoryId,
+      this.stockItemId,
+      this.branchName,
+      this.branchId,
+      this.createdAt,
+      this.updatedAt,
+      this.iV});
 
   SinglePartData.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -59,6 +61,7 @@ class SinglePartData {
     subTitle = json['subTitle'];
     description = json['description'];
     price = json['price'];
+    dealerPrice = json['dealerPrice'];
     stockItemCategoryId = json['stockItemCategoryId'] != null
         ? new StockItemCategoryId.fromJson(json['stockItemCategoryId'])
         : null;
@@ -80,6 +83,7 @@ class SinglePartData {
     data['subTitle'] = subTitle;
     data['description'] = description;
     data['price'] = price;
+    data['dealerPrice'] = dealerPrice;
     if (stockItemCategoryId != null) {
       data['stockItemCategoryId'] = stockItemCategoryId!.toJson();
     }

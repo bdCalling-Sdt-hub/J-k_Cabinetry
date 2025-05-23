@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
-import 'package:jk_cabinet/app/modules/cabinet_detail/model/cabinet_parts_model.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/cabinet_parts_controller.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
@@ -15,6 +14,7 @@ import 'package:jk_cabinet/common/widgets/custom_loading.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
 
 import '../../cabinet_detail/controllers/cabinet_detail_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 
 class CabinetPartsView extends StatefulWidget {
   const CabinetPartsView({super.key});
@@ -27,8 +27,6 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
   final CabinetPartsController _cabinetPartsController = Get.find<CabinetPartsController>();
 
   final CabinetDetailController _cabinetDetailController = Get.find<CabinetDetailController>();
-  var x = 0;
-  final Part parts = Part();
 
   @override
   void initState() {
@@ -129,30 +127,36 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
               SizedBox(height: 8.h),
 
               /// Product Category
-              Text(
-                "Drawers",
-                style: AppStyles.h4(color: AppColors.primaryColor),
-              ),
+              // Text(
+              //   "Drawers",
+              //   style: AppStyles.h4(color: AppColors.primaryColor),
+              // ),
               SizedBox(height: 4.h),
 
               /// Product Title / code
               Text(
-                _cabinetDetailController.cabinetDetailsModel.value.data!.code ?? '',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+               '${_cabinetDetailController.cabinetDetailsModel.value.data!.code ?? ''}/${_cabinetPartsController.singlePartDetailsModel.value.data?.title ?? ''}',
+                style: AppStyles.h2(color: AppColors.primaryColor, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 4.h),
 
               /// Product Description
-              const Text(
-                "BASE CABINET 1 DRAWER, 1 DOOR, 1 SHELF - 9” WIDE X 24” DEEP X 34.5” HIGH",
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+              Text(
+                _cabinetPartsController.singlePartDetailsModel.value.data?.description ?? '',
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
               SizedBox(height: 8.h),
 
               /// Product Price
               Obx(() {
+                final profileController = Get.put(ProfileController());
+                final isDealer = profileController.profileModel.value.data?.dealer ?? false;
+                final regularPrice = _cabinetPartsController.singlePartDetailsModel.value.data?.price;
+                final dealerPrice = _cabinetPartsController.singlePartDetailsModel.value.data?.dealerPrice;
+                final quantity = _cabinetPartsController.quantity.value;
                   return Text(
-                    "Price : \$${(_cabinetPartsController.singlePartDetailsModel.value.data?.price != null ?_cabinetPartsController.singlePartDetailsModel.value.data!.price! * _cabinetPartsController.quantity.value : 0).toStringAsFixed(2) }",
+                    "Price : \$${((isDealer ? (dealerPrice ?? 0) : (regularPrice ?? 0)) * quantity).toStringAsFixed(2)}",
+                    // "Price : \$${(_cabinetPartsController.singlePartDetailsModel.value.data?.price != null ?_cabinetPartsController.singlePartDetailsModel.value.data!.price! * _cabinetPartsController.quantity.value : 0).toStringAsFixed(2) }",
                     //"Price : \$${(_cabinetDetailController.cabinetryPartsModel.value.data!.first.categories!.first.parts![x].price! * _cabinetPartsController.quantity.value).toStringAsFixed(2)}",
                     style: AppStyles.h2(color: AppColors.primaryColor),
                   );
