@@ -9,6 +9,7 @@ import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart';
 import 'package:mime/mime.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -115,6 +116,7 @@ class SignUpController extends GetxController {
   final RxBool designer = false.obs;
   final RxBool contractor = false.obs;
   final RxBool dealer = false.obs;
+  final Logger _logger = Logger();
 
   List<String> selectedRoles = [];
 
@@ -146,7 +148,7 @@ class SignUpController extends GetxController {
         'Something went wrong. Please try again later.',
         snackPosition: SnackPosition.TOP,
       );
-      print(e);
+      _logger.e(e);
     } finally {
       isLoading.value = false;
     }
@@ -205,15 +207,17 @@ class SignUpController extends GetxController {
 
       var response = await request.send();
       var responseBody = await response.stream.bytesToString();
-      print('Sign-up response: $responseBody');
+      _logger.i('Sign-up response: $responseBody');
       var decodedBody = jsonDecode(responseBody);
 
       if (response.statusCode == 200) {
         Get.snackbar('Success', decodedBody['message']);
         Get.toNamed(Routes.SIGN_IN);
+        _logger.i(responseBody);
         // Navigate to the next page or perform any other actions
       } else {
         Get.snackbar('Error', decodedBody['message']);
+        _logger.e(decodedBody['message']);
       }
     } on SocketException catch (_) {
       Get.snackbar(
@@ -227,7 +231,7 @@ class SignUpController extends GetxController {
         'Something went wrong. Please try again later.',
         snackPosition: SnackPosition.TOP,
       );
-      print(e);
+      _logger.e(e);
     } finally {
       isLoading.value = false;
     }
