@@ -322,3 +322,24 @@ class _CartViewState extends State<CartView> {
   }
 }
 
+class CartItem {
+  String id;
+  String name;
+  double price;
+  int quantity;
+  double assemblyCost;
+  bool isAssemblyChecked;
+  String productImg;
+
+  CartItem({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.quantity,
+    required this.assemblyCost,
+    required this.productImg,
+    this.isAssemblyChecked = false,
+  });
+
+  double get totalPrice => (price * quantity) + (isAssemblyChecked ? assemblyCost * quantity : 0);
+}

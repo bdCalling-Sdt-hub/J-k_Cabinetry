@@ -20,8 +20,6 @@ import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../profile/controllers/profile_controller.dart';
-
 class InvoiceView extends StatefulWidget {
    InvoiceView({super.key});
 
@@ -34,7 +32,6 @@ class _InvoiceViewState extends State<InvoiceView> {
   final CartController _cartController=Get.find();
   final HomeController homeController = Get.put(HomeController());
   final PaymentController _paymentController = Get.put(PaymentController());
-  final ProfileController _profileController = Get.put(ProfileController());
   BranchData? branchData;
   String transactionId='';
 
@@ -126,12 +123,8 @@ class _InvoiceViewState extends State<InvoiceView> {
                         /// Assembly
                         Text('\$${cartItem.assemblyCost.toStringAsFixed(2)}',style: AppStyles.h5()),
                         /// Total
-
-                       ///ki ki kire nony ki???
-                        Text(
-                          ' \$${_cartController.inTotal.value.toDouble().toStringAsFixed(2)}',
-                          style: AppStyles.h5(color: AppColors.primaryColor),
-                        ),                      ],
+                        Text('\$${cartItem.totalPrice.toStringAsFixed(2)}',style: AppStyles.h5()),
+                      ],
                     ),
                   );
                 }),
@@ -161,19 +154,8 @@ class _InvoiceViewState extends State<InvoiceView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Obx((){
-                      final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
-                      final isTax = _profileController.profileModel.value.data?.isTax ?? false;
-                      return Text(
-                          'Sales Tax (${isTax ? tax : 0}%) :', style: AppStyles.h4());
-                    }),
-                    Obx((){
-                      final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
-                      final isTax = _profileController.profileModel.value.data?.isTax ?? false;
-                      return Text(
-                          '\$${((isTax ? tax : 0) * _cartController.subtotal.value / 100).toStringAsFixed(2)}',
-                          style: AppStyles.h5());
-                    }),
+                    Text('Sales Tax (6%) :',style: AppStyles.h4()),
+                    Text('\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2) }',style: AppStyles.h5()),
                   ],
                 ),
                 verticalSpacing(12.h),
@@ -185,7 +167,7 @@ class _InvoiceViewState extends State<InvoiceView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Total :',style: AppStyles.h1(color: AppColors.primaryColor),),
-                  Text(' \$${_cartController.inTotal.value.toDouble().toStringAsFixed(2)}',
+                  Text(' \$${_cartController.inTotal.value.toStringAsFixed(2)}',
                     style: AppStyles.h1(color: AppColors.primaryColor),
                   ),
                 ],
@@ -284,12 +266,9 @@ class _InvoiceViewState extends State<InvoiceView> {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
+                  pw.Text('Sales Tax (6%) :', style: pw.TextStyle(fontSize: 18, font: customFont)),
                   pw.Text(
-                    'Sales Tax (${_profileController.profileModel.value.data?.isTax ?? false ? _profileController.profileModel.value.data?.branchTax ?? 0 : 0}%) :',
-                    style: pw.TextStyle(fontSize: 18, font: customFont),
-                  ),
-                  pw.Text(
-                    '\$${((_profileController.profileModel.value.data?.isTax ?? false ? _profileController.profileModel.value.data?.branchTax ?? 0 : 0) * _cartController.subtotal.value / 100).toStringAsFixed(2)}',
+                    '\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2)}',
                     style: pw.TextStyle(fontSize: 18, font: customFont),
                   ),
                 ],

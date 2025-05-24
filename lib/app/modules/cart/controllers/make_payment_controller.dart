@@ -334,7 +334,7 @@ class PaymentController extends GetxController{
     if (request.statusCode == 200 || request.statusCode == 201) {
       paymentResponseModel.value = PaymentResponseModel.fromJson(responseBody);
       _logger.i("Payment response: $responseBody");
-      // await _cartController.clearCart();
+      await _cartController.clearCart();
       // Get.toNamed(Routes.INVOICE);
       Get.toNamed(Routes.CASH_PAYMENT_PROCESS);
       // Get.dialog(

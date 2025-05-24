@@ -24,16 +24,10 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title:const Text("Profile"),
-      // centerTitle: true,
-      //   leading: GestureDetector(
-      //       onTap: (){
-      //         Get.back();
-      //       },
-      //       child: Icon(Icons.arrow_back_ios)),
-      // ),
-
-      appBar: CustomAppBarTitle(isShowBackButton: true,),
+      appBar: const CustomAppBarTitle(
+        isShowText: true,
+        text: 'Profile',
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await _profileController.fetchProfileData();

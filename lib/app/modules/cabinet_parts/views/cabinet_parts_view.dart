@@ -197,16 +197,13 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                       final controller = Get.find<CartController>();
                       final partsController = Get.find<CabinetPartsController>();
                       final detailController = Get.find<CabinetDetailController>();
-                      final profileController = Get.put(ProfileController());
-                      final isDealer = profileController.profileModel.value.data?.dealer ?? false;
 
                       final part = partsController.singlePartDetailsModel.value.data;
                       if (part != null) {
                         await controller.addToCart(
                           productId: part.sId.toString(),
                           name: detailController.cabinetDetailsModel.value.data?.code ?? 'Unknown',
-                          // price: part.price!.toDouble(),
-                          price: isDealer && part.dealerPrice != null ? part.dealerPrice!.toDouble() : part.price != null ? part.price!.toDouble() : 0.0,
+                          price: part.price!.toDouble(),
                           quantity: partsController.quantity.value,
                           productImg: part.images != null &&
                                   part.images!.isNotEmpty

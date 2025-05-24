@@ -110,25 +110,24 @@ class _PartsCardState extends State<PartsCard> {
               ),
               SizedBox(height: 8.h),
 
+
               /// -[Add to cart] button
               CustomButton(
-                onTap: () async {
+                onTap: () async{
                   final qty = widget.cabinetDetailController?.quantity[widget.index] ?? 1;
-                  final profileController = Get.put(ProfileController());
-                  final isDealer = profileController.profileModel.value.data?.dealer ?? false;
                   // Add to cart
                   _cartController.addToCart(
                     productId: widget.parts.id.toString(),
-                    name: widget.cabinetDetailController?.cabinetDetailsModel.value.data?.code ?? 'Unknown',
-                    // price: widget.parts.price != null
-                    //     ? widget.parts.price!.toDouble()
-                    //     : 0.0,
-                    price: isDealer && widget.parts.dealerPrice != null ? widget.parts.dealerPrice!.toDouble() : widget.parts.price != null ? widget.parts.price!.toDouble() : 0.0,
+                    name: widget.cabinetDetailController?.cabinetDetailsModel
+                            .value.data?.code ??
+                        'Unknown',
+                    price: widget.parts.price != null
+                        ? widget.parts.price!.toDouble()
+                        : 0.0,
                     quantity: qty,
                     productImg: widget.parts.images != null &&
                             widget.parts.images!.isNotEmpty
-                        ? '${ApiConstants.imageBaseUrl}/${widget.parts
-                        .images?[0]}'
+                        ? '${ApiConstants.imageBaseUrl}/${widget.parts.images?[0]}'
                         : AppConstants.demoImage,
                   );
                 },
@@ -144,21 +143,21 @@ class _PartsCardState extends State<PartsCard> {
 
   GestureDetector buildViewDetailsButton() {
     return GestureDetector(
-      onTap: () {
-        final partsId = widget.parts.id;
-        Get.toNamed(Routes.CABINET_PARTS, arguments: {'partsId': partsId});
-      },
-      child: Row(
-        children: [
-          const Text(
-            "View Details -",
-            style: TextStyle(decoration: TextDecoration.underline),
-          ),
-          SizedBox(width: 4.w),
-          Icon(Icons.open_in_new, size: 16.sp),
-        ],
-      ),
-    );
+              onTap: () {
+                final partsId =  widget.parts.id;
+                Get.toNamed(Routes.CABINET_PARTS, arguments: {'partsId' : partsId});
+              },
+              child: Row(
+                children: [
+                  const Text(
+                    "View Details -",
+                    style: TextStyle(decoration: TextDecoration.underline),
+                  ),
+                  SizedBox(width: 4.w),
+                  Icon(Icons.open_in_new, size: 16.sp),
+                ],
+              ),
+            );
   }
 
   Container buildPartImage() {
