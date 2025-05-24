@@ -12,43 +12,52 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.backgroundColor,
     this.textColor,
-    // this.notificationCount,
-    // this.chatOnTap,
     this.isShowChat = false,
-    this.text,
     this.isShowText = false,
+    this.isShowBackButton = false,
+    this.text,
     this.bottom,
   });
 
   final Color? backgroundColor;
   final Color? textColor;
-  // final String? notificationCount;
-  // final VoidCallback? chatOnTap;
   final bool isShowChat;
   final bool isShowText;
+  final bool isShowBackButton;
   final String? text;
   final PreferredSizeWidget? bottom;
 
   @override
   Widget build(BuildContext context) {
+    // Placeholder: Replace with actual notification count from controller
+    final notificationCount = ''; // TODO: Use Get.find<YourController>().notificationCount.value if reactive
+
     return AppBar(
-        // automaticallyImplyLeading: true,
-        // onLeadingPressed: () => Get.back(),
+      automaticallyImplyLeading: true,
+      leading: isShowBackButton
+          ? GestureDetector(
+        child: const Icon(Icons.arrow_back_ios),
+        onTap: () {
+          Get.back(); // Navigate back properly
+          print('Back button tapped');
+        },
+      )
+          : const SizedBox.shrink(),
       backgroundColor: backgroundColor ?? Colors.white,
       title: isShowText
           ? Text(
-              text!,
-              style: AppStyles.h2(),
-            )
+        text!,
+        style: AppStyles.h2(),
+      )
           : Image.asset(AppImage.appLogoImg, height: 35.h),
       centerTitle: true,
       bottom: bottom,
       actions: [
-        Padding(
-          padding: EdgeInsets.all(8.0.sp),
-          child: Stack(
-            children: [
-              if (isShowChat)
+        if (isShowChat)
+          Padding(
+            padding: EdgeInsets.all(8.0.sp),
+            child: Stack(
+              children: [
                 GestureDetector(
                   onTap: () {
                     Get.toNamed(Routes.MESSAGE);
@@ -58,27 +67,67 @@ class CustomAppBarTitle extends StatelessWidget implements PreferredSizeWidget {
                     height: 40.h,
                   ),
                 ),
-              // if (isShowChat &&
-              //     notificationCount != null &&
-              //     notificationCount!.isNotEmpty)
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        color: Colors.redAccent, shape: BoxShape.circle),
-                    child: Padding(
-                      padding: EdgeInsets.all(1.0.sp),
-                      child: Text(
-                        '',
-                        style: AppStyles.h6(color: Colors.white),
+                // Modified: Removed Obx to fix GetX error, conditionally render badge
+                // Original Obx code commented out for traceability
+                // Obx(() {
+                //   final notificationCount = ''; // Replace with actual count from controller
+                //   if (notificationCount.isNotEmpty) {
+                //     return Positioned(
+                //       top: 0,
+                //       right: 0,
+                //       child: Container(
+                //         decoration: const BoxDecoration(
+                //           color: Colors.redAccent,
+                //           shape: BoxShape.circle,
+                //         ),
+                //         constraints: BoxConstraints(
+                //           minWidth: 16.sp,
+                //           minHeight: 16.sp,
+                //         ),
+                //         child: Padding(
+                //           padding: EdgeInsets.all(1.0.sp),
+                //           child: Center(
+                //             child: Text(
+                //               notificationCount,
+                //               style: AppStyles.h6(color: Colors.white),
+                //               textAlign: TextAlign.center,
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     );
+                //   }
+                //   return const SizedBox.shrink();
+                // }),
+                // New: Conditionally render badge without Obx
+                if (notificationCount.isNotEmpty)
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.redAccent,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: BoxConstraints(
+                        minWidth: 16.sp,
+                        minHeight: 16.sp,
+                      ), // Ensure minimum size to avoid hit-test error
+                      child: Padding(
+                        padding: EdgeInsets.all(1.0.sp),
+                        child: Center(
+                          child: Text(
+                            notificationCount,
+                            style: AppStyles.h6(color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
-        )
       ],
     );
   }
