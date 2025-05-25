@@ -11,6 +11,7 @@ import 'package:jk_cabinet/common/app_string/app_string.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
 import 'package:jk_cabinet/common/url_luncher/externer_url_luncher.dart';
+import 'package:jk_cabinet/main.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -57,17 +58,22 @@ class _AppDrawerState extends State<AppDrawer> {
               child: Wrap(
                 runSpacing: 2,
                 children: [
-                  ListTile(
-                    title: Text(
-                      'Login',
-                      style: AppStyles.h3(),
-                    ),
-                    horizontalTitleGap: 20.w,
-                    onTap: () {
-                      Navigator.pop(context);
-                      Get.toNamed(Routes.SIGN_IN);
-                    },
-                  ),
+                  FutureBuilder<String>(future: PrefsHelper.getString(AppConstants.signInToken) , builder: (context, snapshot) {
+                    if (snapshot.data?.isEmpty ?? true) {
+                      return ListTile(
+                        title: Text(
+                          'Login',
+                          style: AppStyles.h3(),
+                        ),
+                        horizontalTitleGap: 20.w,
+                        onTap: () {
+                          Navigator.pop(context);
+                          Get.toNamed(Routes.SIGN_IN);
+                        },
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
                   ListTile(
                     title: Text(
                       'Home',

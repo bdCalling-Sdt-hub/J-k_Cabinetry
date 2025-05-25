@@ -74,6 +74,7 @@ class _InvoiceViewState extends State<InvoiceView> {
                 CustomIconTextButton(
                     onPressed: ()async{
                   await generateShareInvoice();
+                  // _cartController.clearCart();
                 }, icon:Icons.receipt, label: 'Invoice')
               ],
             ),
@@ -129,7 +130,7 @@ class _InvoiceViewState extends State<InvoiceView> {
 
                        ///ki ki kire nony ki???
                         Text(
-                          ' \$${_cartController.inTotal.value.toDouble().toStringAsFixed(2)}',
+                          ' \$${cartItem.totalPrice.toDouble().toStringAsFixed(2)}',
                           style: AppStyles.h5(color: AppColors.primaryColor),
                         ),                      ],
                     ),
@@ -323,6 +324,7 @@ class _InvoiceViewState extends State<InvoiceView> {
    final fileParams= ShareParams(text: 'Invoice PDF',files:[file],fileNameOverrides: ['my invoice.pdf']);
    final result = await SharePlus.instance.share(fileParams);
    if(result.status == ShareResultStatus.success){
+    await _cartController.clearCart();
      Get.snackbar('Success', 'Invoice PDF shared successfully');
    }
   }
