@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/make_payment_controller.dart';
+import 'package:jk_cabinet/app/modules/profile/controllers/profile_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
@@ -20,14 +21,13 @@ class CheckoutView extends StatelessWidget {
 
   final CartController _cartController = Get.find();
   final PaymentController _paymentController = Get.put(PaymentController());
+  final ProfileController _profileController = Get.put(ProfileController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(
+      appBar: const CustomAppBarTitle(
         isShowChat: true,
-        chatOnTap: () {},
-        notificationCount: '40',
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -307,16 +307,28 @@ class CheckoutView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Sales Tax (6%) :', style: AppStyles.h4()),
-                      Text(
-                          '\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2)}',
-                          style: AppStyles.h5()),
+                      // todo: add conditionals here (check true false if tax applies for that user)
+                      Obx((){
+                        final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+                        final isTax = _profileController.profileModel.value.data?.isTax ?? false;
+                        return Text(
+                            'Sales Tax (${isTax ? tax : 0}%) :', style: AppStyles.h4());
+                      }),
+                      Obx((){
+                        final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+                        final isTax = _profileController.profileModel.value.data?.isTax ?? false;
+                        return Text(
+                            '\$${((isTax ? tax : 0) * _cartController.subtotal.value / 100).toStringAsFixed(2)}',
+                            style: AppStyles.h5());
+                      }),
                     ],
                   ),
                   verticalSpacing(12.h),
                 ],
               ),
               verticalSpacing(15.h),
+
+              /// Total Price
               Obx(() {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -326,30 +338,36 @@ class CheckoutView extends StatelessWidget {
                       style: AppStyles.h1(color: AppColors.primaryColor),
                     ),
                     Text(
-                      ' \$${_cartController.inTotal.value.toStringAsFixed(2)}',
+                      ' \$${_cartController.inTotal.value.toDouble().toStringAsFixed(2)}',
                       style: AppStyles.h1(color: AppColors.primaryColor),
                     ),
                   ],
                 );
               }),
               verticalSpacing(15.h),
+
+              /// The call to action button at the bottom of the checkout page - [Complete Order/Pay Now] Button
               Obx(() {
                 return CustomButton(
                   loading: _paymentController.isLoading.value,
                     onTap: () async {
+                    // if online payment option is selected, make the stripe payment
                       if (_cartController.isOnlinePayment.value) {
                         await _paymentController.makePayment(
                             amount: '${_cartController.inTotal.value}',
                             currency: 'USD',
                             subscriptionId: 'shuvoJk52',
-                            subscriberId: 'shuvoJk52');
-                      }else{
-                        Get.toNamed(Routes.CASH_PAYMENT_PROCESS);
+                            subscriberId: 'shuvoJk52',
+                        );
+                      } else {
+                        // otherwise, this is a cash payment order so hit the cash payment api and then navigate to the next page...
+                        _paymentController.handleCashPayment();
                       }
                     },
                     text: _cartController.isOnlinePayment.value
                         ? 'Pay Now'
-                        : 'Complete order');
+                        : 'Complete order',
+                );
               }),
               verticalSpacing(16.h),
             ],

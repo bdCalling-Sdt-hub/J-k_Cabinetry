@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_common/get_reset.dart';
+import 'package:jk_cabinet/app/data/api_constants.dart';
 import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/cabinet_parts_controller.dart';
-import 'package:jk_cabinet/app/modules/cabinet_parts/controllers/recently_viewed_controller.dart';
-import 'package:jk_cabinet/app/modules/cabinet_parts/widgets/recently_viewed.dart';
+import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
+import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
+import 'package:jk_cabinet/common/widgets/custom_loading.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+
+import '../../cabinet_detail/controllers/cabinet_detail_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 
 class CabinetPartsView extends StatefulWidget {
   const CabinetPartsView({super.key});
@@ -20,119 +24,145 @@ class CabinetPartsView extends StatefulWidget {
 }
 
 class _CabinetPartsViewState extends State<CabinetPartsView> {
- final CabinetPartsController _cabinetPartsController=Get.put(CabinetPartsController());
+  final CabinetPartsController _cabinetPartsController = Get.find<CabinetPartsController>();
+
+  final CabinetDetailController _cabinetDetailController = Get.find<CabinetDetailController>();
+
+  @override
+  void initState() {
+    super.initState();
+    _cabinetPartsController.fetchPartsDetails();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBarTitle(text: 'Sink & Vanity Bases',),
+      appBar: const CustomAppBarTitle(
+        text: 'Sink & Vanity Bases',
+      ),
       body: SingleChildScrollView(
         child: Padding(
-          padding:  EdgeInsets.all(16.0.sp),
+          padding: EdgeInsets.all(16.0.sp),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// Main Product Image
               Center(
-                child: Obx((){
-                  if(_cabinetPartsController.selectedImageIndex.value<0){
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  return  GestureDetector(
-                    onTap: (){
-                      showImageDialog(context, _cabinetPartsController.selectedImageIndex.value);
-                    },
-                    child: Container(
-                      width: 180.w,
-                      height: 180.h,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey),
+                child: Obx(
+                  () {
+                    if (_cabinetPartsController.productImages.isEmpty || _cabinetPartsController.selectedImageIndex.value < 0 || _cabinetPartsController.selectedImageIndex.value >= _cabinetPartsController.productImages.length) {
+                      return const Center(child: CustomLoading());
+                    }
+                    return GestureDetector(
+                      onTap: () {
+                        showImageDialog(context, _cabinetPartsController.selectedImageIndex.value);
+                      },
+                      child: Container(
+                        width: 180.w,
+                        height: 180.h,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null &&
+                            _cabinetPartsController.singlePartDetailsModel.value.data!.images!.isNotEmpty ? Image.network(
+                          '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data?.images?[_cabinetPartsController.selectedImageIndex.value]}',
+                          fit: BoxFit.cover,
+                        ): Center(
+                          child: Icon(Icons.image, size: 40.sp, color: Colors.grey),
+                        ),
                       ),
-                      child: Image.network(
-                          _cabinetPartsController.productImages[_cabinetPartsController.selectedImageIndex.value],
-                          fit: BoxFit.contain,
-                      )
-                    ),
-                  );
-                }
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 12.h),
 
               /// Thumbnail Selector
-              Obx((){
-                if(_cabinetPartsController.productImages.isEmpty){
-                  return  Container(
-                    margin:  EdgeInsets.symmetric(horizontal: 4.w),
-                    width: 40.w,
-                    height: 40.h,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color:  Colors.grey,
-                      ),
-                    ),
-                    child: const Center(child: Icon(Icons.image)),
-                  );
-                }
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(_cabinetPartsController.productImages.length, (index) {
-                    return GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _cabinetPartsController.selectedImageIndex.value = index;
-                        });
-                      },
-                      child: Container(
-                        margin:  EdgeInsets.symmetric(horizontal: 4.w),
-                        width: 40.w,
-                        height: 40.h,
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: _cabinetPartsController.selectedImageIndex.value == index ? AppColors.primaryColor : Colors.grey,
-                          ),
+              Obx(
+                () {
+                  if (_cabinetPartsController.productImages.isEmpty) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 4.w),
+                      width: 40.w,
+                      height: 40.h,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Colors.grey,
                         ),
-                        child: Image.network(_cabinetPartsController.productImages[index], fit: BoxFit.contain),
                       ),
+                      child: const Center(child: Icon(Icons.image)),
                     );
-                  }),
-                );
-              }
-
+                  }
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(_cabinetPartsController.singlePartDetailsModel.value.data?.images?.length ?? 0,
+                      (index) {
+                        return GestureDetector(
+                          onTap: () {
+                                _cabinetPartsController
+                                    .selectedImageIndex.value = index;
+                          },
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 4.w),
+                            width: 40.w,
+                            height: 40.h,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: _cabinetPartsController.selectedImageIndex.value == index
+                                    ? AppColors.primaryColor
+                                    : Colors.grey,
+                              ),
+                            ),
+                            child: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null ? Image.network(
+                              '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data?.images?[index]}',
+                              fit: BoxFit.contain,
+                            ) : const Icon(Icons.image),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-               SizedBox(height: 8.h),
+              SizedBox(height: 8.h),
 
               /// Product Category
-              Text(
-                "Drawers",
-                style: AppStyles.h4(color: AppColors.primaryColor),
-              ),
-               SizedBox(height: 4.h),
+              // Text(
+              //   "Drawers",
+              //   style: AppStyles.h4(color: AppColors.primaryColor),
+              // ),
+              SizedBox(height: 4.h),
 
-              /// Product Title
-              const Text(
-                "S8/B09",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              /// Product Title / code
+              Text(
+               '${_cabinetDetailController.cabinetDetailsModel.value.data!.code ?? ''}/${_cabinetPartsController.singlePartDetailsModel.value.data?.title ?? ''}',
+                style: AppStyles.h2(color: AppColors.primaryColor, fontWeight: FontWeight.bold),
               ),
-               SizedBox(height: 4.h),
+              SizedBox(height: 4.h),
 
               /// Product Description
-              const Text(
-                "BASE CABINET 1 DRAWER, 1 DOOR, 1 SHELF - 9” WIDE X 24” DEEP X 34.5” HIGH",
-                style: TextStyle(fontSize: 14, color: Colors.black54),
+              Text(
+                _cabinetPartsController.singlePartDetailsModel.value.data?.description ?? '',
+                style: const TextStyle(fontSize: 14, color: Colors.black54),
               ),
-               SizedBox(height: 8.h),
+              SizedBox(height: 8.h),
 
               /// Product Price
-               Obx((){
-                 return Text(
-                   "Price : \$${120.5 * _cabinetPartsController.quantity.value}",
-                   style: AppStyles.h2(color: AppColors.primaryColor),
-                 );
-               }
-
-               ),
-               SizedBox(height: 12.h),
+              Obx(() {
+                final profileController = Get.put(ProfileController());
+                final isDealer = profileController.profileModel.value.data?.dealer ?? false;
+                final regularPrice = _cabinetPartsController.singlePartDetailsModel.value.data?.price;
+                final dealerPrice = _cabinetPartsController.singlePartDetailsModel.value.data?.dealerPrice;
+                final quantity = _cabinetPartsController.quantity.value;
+                  return Text(
+                    "Price : \$${((isDealer ? (dealerPrice ?? 0) : (regularPrice ?? 0)) * quantity).toStringAsFixed(2)}",
+                    // "Price : \$${(_cabinetPartsController.singlePartDetailsModel.value.data?.price != null ?_cabinetPartsController.singlePartDetailsModel.value.data!.price! * _cabinetPartsController.quantity.value : 0).toStringAsFixed(2) }",
+                    //"Price : \$${(_cabinetDetailController.cabinetryPartsModel.value.data!.first.categories!.first.parts![x].price! * _cabinetPartsController.quantity.value).toStringAsFixed(2)}",
+                    style: AppStyles.h2(color: AppColors.primaryColor),
+                  );
+                },
+              ),
+              SizedBox(height: 12.h),
 
               /// Quantity Selector & Add to Cart Button
               Row(
@@ -144,13 +174,13 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                         onPressed: _cabinetPartsController.decrement,
                         icon: const Icon(Icons.remove),
                       ),
-                      Obx((){
-                        return Text(
-                          "${_cabinetPartsController.quantity}",
-                          style: AppStyles.h3(),
-                        );
-                      }
-
+                      Obx(
+                        () {
+                          return Text(
+                            "${_cabinetPartsController.quantity}",
+                            style: AppStyles.h3(),
+                          );
+                        },
                       ),
                       IconButton(
                         onPressed: _cabinetPartsController.increment,
@@ -158,14 +188,54 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
                       ),
                     ],
                   ),
+
+                  SizedBox(width: 20.w),
+
                   /// Add to Cart Button
-                   SizedBox(width: 20.w),
-                  CustomButton(onTap: (){}, text: 'Add to cart',width: 70.w,),
+                  CustomButton(
+                    onTap: () async {
+                      final controller = Get.find<CartController>();
+                      final partsController = Get.find<CabinetPartsController>();
+                      final detailController = Get.find<CabinetDetailController>();
+                      final profileController = Get.put(ProfileController());
+                      final isDealer = profileController.profileModel.value.data?.dealer ?? false;
+
+                      final part = partsController.singlePartDetailsModel.value.data;
+                      if (part != null) {
+                        await controller.addToCart(
+                          productId: part.sId.toString(),
+                          name: detailController.cabinetDetailsModel.value.data?.code ?? 'Unknown',
+                          // price: part.price!.toDouble(),
+                          price: isDealer && part.dealerPrice != null ? part.dealerPrice!.toDouble() : part.price != null ? part.price!.toDouble() : 0.0,
+                          quantity: partsController.quantity.value,
+                          productImg: part.images != null &&
+                                  part.images!.isNotEmpty
+                              ? '${ApiConstants.imageBaseUrl}/${part.images?.first}'
+                              : AppConstants.demoImage,
+                        );
+
+
+                        Get.snackbar(
+                          'Success',
+                          'Item added to cart',
+                          snackPosition: SnackPosition.BOTTOM,
+                        );
+                      }
+                    },
+                    text: 'Add to cart',
+                    width: 70.w,
+                  ),
                 ],
               ),
               verticalSpacing(12.h),
-              Divider(color: Colors.grey.shade400,),
-              RecentlyViewed(key: widget.key,)
+              Divider(
+                color: Colors.grey.shade400,
+              ),
+
+              // todo: implement this [Recently Viewed] feature if possible
+              // RecentlyViewed(
+              //   key: widget.key,
+              // ),
             ],
           ),
         ),
@@ -173,28 +243,24 @@ class _CabinetPartsViewState extends State<CabinetPartsView> {
       floatingActionButton: const CustomCartFloatingButton(),
     );
   }
- void showImageDialog(BuildContext context, int imageIndex) {
-   showDialog(
-     context: context,
-     builder: (context) {
-       return AlertDialog(
-         //backgroundColor: Colors.transparent,
-         title: Image.network( _cabinetPartsController.productImages[imageIndex]),
-         actions: [
-           TextButton(
-             onPressed: () {
-               Navigator.pop(context); // Close dialog
-             },
-             child: const Text("Close"),
-           ),
-         ],
-       );
-     }
-   );
- }
 
+  void showImageDialog(BuildContext context, int imageIndex) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            //backgroundColor: Colors.transparent,
+            title: _cabinetPartsController.singlePartDetailsModel.value.data?.images != null ? Image.network(
+                '${ApiConstants.imageBaseUrl}/${_cabinetPartsController.singlePartDetailsModel.value.data!.images![imageIndex]}') : const Icon(Icons.image),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context); // Close dialog
+                },
+                child: const Text("Close"),
+              ),
+            ],
+          );
+        });
+  }
 }
-
-
-
-

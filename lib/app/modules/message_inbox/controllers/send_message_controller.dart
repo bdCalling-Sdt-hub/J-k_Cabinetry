@@ -6,16 +6,31 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
+import 'package:jk_cabinet/app/modules/message_inbox/controllers/message_inbox_controller.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
+import 'package:logger/logger.dart';
+
+import '../model/inbox_history_model.dart';
 
 class SendMessageController extends GetxController {
   RxString commentMessage = ''.obs;
   File? selectedIFile;
-  var filePath=''.obs;
-  RxBool isLoading=false.obs;
+  var filePath = ''.obs;
+  RxBool isLoading = false.obs;
+  String chatId = Get.arguments['chatId'];
+  final _logger = Logger();
+  final MessageInboxController _messageInboxController =
+  Get.put(MessageInboxController());
 
-  sendMessage(String? message, String filePath,dynamic receiverId,dynamic chatId) async {
-    String token = await PrefsHelper.getString('token');
+
+  //send message via rest api instead of socket
+  sendMessage({
+    required String message,
+    String? filePath,
+    required String receiverId,
+    required String chatId,
+  }) async {
+    String token = await PrefsHelper.getString('sign-in-token');
     Map<String, String> headers = {
       'Authorization': 'Bearer $token',
       'Content-Type': 'multipart/form-data'
@@ -26,15 +41,14 @@ class SendMessageController extends GetxController {
       'receiverId': receiverId,
     };
 
-    var request =  http.MultipartRequest('POST', Uri.parse(''));
+    var request = http.MultipartRequest('POST', Uri.parse(ApiConstants.sendMessageUrl));
     request.fields.addAll(body);
-
-    File fileData = File(filePath);
 
     try {
       // Determine file type and add it to the request
-      isLoading.value=true;
-      if(fileData.path !=null && fileData.path.isNotEmpty){
+      isLoading.value = true;
+      if (filePath != null && filePath.isNotEmpty) {
+        File fileData = File(filePath);
         await _addFileToRequest(request, fileData);
       }
 
@@ -47,10 +61,33 @@ class SendMessageController extends GetxController {
       http.StreamedResponse response = await request.send();
       var responseBody = await response.stream.bytesToString();
 
-      if (response.statusCode == 201) {
-        var responseData = jsonDecode(responseBody);
-        commentMessage.value = responseData['message'];
-        print("Response Success (201): $responseBody");
+      if (response.statusCode == HttpStatus.ok || response.statusCode == HttpStatus.created) {
+        try {
+          var responseData = jsonDecode(responseBody);
+          commentMessage.value = responseData['message'];
+
+          try {
+            // Decode responseData['data'] if it's a String
+            final messageData = responseData['data'] is String
+                ? jsonDecode(responseData['data'])
+                : responseData['data'];
+            if (messageData != null) {
+              // Create a MessageAttributes object, handling string senderId/receiverId
+              var newMessage = MessageAttributes.fromJson(messageData);
+              _messageInboxController.addNewMessage(newMessage);
+              print("Message added successfully: ${newMessage.sId}");
+            } else {
+              _logger.e('Invalid data format for message: ${responseData['data']}');
+            }
+          } catch (e) {
+            _logger.e('Error parsing new message: $e');
+            _logger.e('Response data: ${responseData['data']}');
+          }
+
+          print("Response Success: $responseBody");
+        } catch (e) {
+          _logger.e('Error decoding response: $e');
+        }
       } else {
         var errorData = jsonDecode(responseBody);
         commentMessage.value = errorData['message'] ?? 'Something went wrong';
@@ -61,18 +98,20 @@ class SendMessageController extends GetxController {
       print(e.toString());
       commentMessage.value = 'An error occurred while uploading the file.';
       Get.snackbar('Failed', commentMessage.value);
-    }finally{
-      isLoading.value=false;
+      print(e.toString());
+    } finally {
+      isLoading.value = false;
     }
   }
 
   pickImageFromGallery() async {
-    final returnImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final returnImage =
+    await ImagePicker().pickImage(source: ImageSource.gallery);
     if (returnImage == null) return;
     selectedIFile = File(returnImage.path);
-    filePath.value=selectedIFile!.path;
+    filePath.value = selectedIFile!.path;
     print('ImagesPath:$filePath');
-    if(filePath.value.isNotEmpty){
+    if (filePath.value.isNotEmpty) {
       Get.snackbar('File selected', '');
     }
   }
@@ -103,6 +142,4 @@ class SendMessageController extends GetxController {
       throw Exception('Unsupported file type');
     }
   }
-
-
 }

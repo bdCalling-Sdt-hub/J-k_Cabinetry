@@ -59,7 +59,7 @@ class CabinetrySpec extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(),
+      appBar: const CustomAppBarTitle(),
       body: SingleChildScrollView(
         padding:  EdgeInsets.all(16.sp),
         child: Column(

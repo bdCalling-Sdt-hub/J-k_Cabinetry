@@ -1,4 +1,10 @@
-class DataAgeFormation {
+import 'difference_formation.dart';
+
+class DataAgeFormation extends DifferenceFormation {
+  String formatAge(DateTime dateTime) {
+    Duration difference = formatDifference(dateTime);
+    return formatContentAge(difference);
+  }
 
   String formatContentAge(Duration difference) {
     if (difference.inMinutes < 1) {

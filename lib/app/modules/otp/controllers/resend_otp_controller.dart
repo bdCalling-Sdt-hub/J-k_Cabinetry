@@ -25,12 +25,13 @@ class ResendOtpController extends GetxController {
       'email': Get.arguments['email'].toString(),
     };
 
-    print('Request URL: ${ApiConstants.emailSendUrl}');
+    print('Request URL: ${ApiConstants.baseUrl}');
     print('Request Headers: ${headers.toString()}');
     print('Request Body: ${jsonEncode(body)}');
 
+    /// todo: hit the right api
     try {
-      final url = Uri.parse(ApiConstants.emailSendUrl);
+      final url = Uri.parse(ApiConstants.baseUrl);
       final request = http.Request('POST', url)
         ..headers.addAll(headers)
         ..body = jsonEncode(body);
@@ -53,6 +54,4 @@ class ResendOtpController extends GetxController {
       isLoading.value = false; // Stop loading
     }
   }
-
-
 }

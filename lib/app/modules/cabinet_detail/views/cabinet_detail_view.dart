@@ -1,24 +1,26 @@
-
 import 'package:flutter/material.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jk_cabinet/app/data/api_constants.dart';
 import 'package:jk_cabinet/app/modules/cabinet_detail/controllers/cabinet_detail_controller.dart';
+import 'package:jk_cabinet/app/modules/cabinet_detail/model/cabinet_parts_model.dart';
 import 'package:jk_cabinet/app/modules/cabinet_detail/widgets/cabinet_description.dart';
-import 'package:jk_cabinet/app/modules/cabinet_detail/widgets/qtyadd_product_card.dart';
+import 'package:jk_cabinet/app/modules/cabinet_detail/widgets/parts_card.dart';
 import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
 import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
-import 'package:jk_cabinet/common/app_drawer/app_drawer.dart';
-import 'package:jk_cabinet/common/app_images/network_image%20.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
-import 'package:jk_cabinet/common/widgets/app_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
-import 'package:jk_cabinet/common/widgets/custom_button.dart';
 import 'package:jk_cabinet/common/widgets/custom_cart_floating_button.dart';
+import 'package:jk_cabinet/common/widgets/custom_loading.dart';
 import 'package:jk_cabinet/common/widgets/header_title_bar.dart';
-import 'package:jk_cabinet/common/widgets/search_field.dart';
 import 'package:jk_cabinet/common/widgets/spacing.dart';
+
+import '../../cart/controllers/cart_controller.dart';
+
+
 
 class CabinetDetailView extends StatefulWidget {
 
@@ -29,46 +31,44 @@ class CabinetDetailView extends StatefulWidget {
 }
 
 class _CabinetDetailsViewState extends State<CabinetDetailView> {
-  final CabinetDetailController _cabinetDetailController=Get.put(CabinetDetailController());
+  final CabinetDetailController _cabinetDetailController = Get.put(CabinetDetailController());
   final HomeController homeController = Get.put(HomeController());
-  final List<Map<String, String>> cabinetDetails = [
-    {
-      'title': 'Bases & Drawers Cabinets',
-    },
-    {
-      'title': 'Sink & Vanity Bases',
-    },
-    {
-      'title': 'Wall Pantries & Oven Cabinets',
-    },
-    {
-      'title': 'Glass Cabinet',
-    },
-    {
-      'title': 'Specialty Cabinets',
-    },
-    {
-      'title': 'Panels',
-    },
-    {
-      'title': 'Moldings & Fillers',
-    },
-    {
-      'title': 'Dummy Doors',
-    },
-    {
-      'title': 'Accessories',
-
-    },
-  ];
+  final CartController _cartController = Get.put(CartController());
 
   BranchData? branchData;
+
+  // helper function to strip HTML tags
+  String _stripHtmlTags(String htmlString) {
+    // Replace common HTML entities
+    var withoutEntities = htmlString
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"');
+
+    // Replace block-level elements with newlines
+    var withLineBreaks = withoutEntities
+      .replaceAll(RegExp(r'<(div|p|br|h[1-6])[^>]*>', caseSensitive: false), '\n')
+      .replaceAll(RegExp(r'</(div|p|h[1-6])>', caseSensitive: false), '\n');
+
+    // Remove all remaining HTML tags
+    var withoutTags = withLineBreaks.replaceAll(RegExp(r'<[^>]*>'), '');
+
+    // Clean up excessive whitespace
+    return withoutTags
+      .replaceAll(RegExp(r'\n\s*\n'), '\n\n')
+      .trim();
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((__)async{
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       branchData = await homeController.saveBranchInfo();
+      await _cabinetDetailController.fetchCabinetParts();
       await _cabinetDetailController.fetchCabinetDetails();
+      final cabinetItem = _cabinetDetailController.cabinetDetailsModel.value.data;
       setState(() {});
     });
   }
@@ -76,64 +76,104 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(
-        isShowChat: true, chatOnTap: () {}, notificationCount: '40',),
-      //drawer: const AppDrawer(),
+      appBar: const CustomAppBarTitle(
+        isShowChat: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TopBarContactInfo(branchData: branchData,),
+              TopBarContactInfo(branchData: branchData),
               verticalSpacing(16.h),
               Column(
                 children: [
-                  // SearchField(),
-                  // verticalSpacing(12.h),
+                  if (_cabinetDetailController.cabinetDetailsModel.value.data == null)
+                    const CustomLoading()
+                  else
                   Text(
-                    'S8 White',
-                    style: AppStyles.h2(color: AppColors.roseTaupeColor,fontWeight: FontWeight.bold),
+                    _cabinetDetailController.cabinetDetailsModel.value.data?.code ?? '...',
+                    style: AppStyles.h2(color: AppColors.roseTaupeColor, fontWeight: FontWeight.bold),
                   ),
-                  Image.network(AppNetworkImage.cabinet2Img, height: 200.h), // Add a local image
+
+                  if (_cabinetDetailController.cabinetDetailsModel.value.data == null)
+                    const CustomLoading()
+                  else
+                  Image.network(
+                    '${ApiConstants.imageBaseUrl}${_cabinetDetailController.cabinetDetailsModel.value.data?.imageUrl}',
+                  ),
                   SizedBox(height: 10.h),
                 ],
               ),
               SizedBox(height: 15.h),
-              const CabinetDescription(title: 'Door Panel', description: '3/4"-thick solid wood; full overlay door.'),
-              const CabinetDescription(title: 'Door Hinge', description: '6-way adjustable; soft-close metal; hidden Euro-style.'),
-              const CabinetDescription(title: 'Adjustable Shelf', description: '5/8"-thick cabinet-grade plywood; clear coat finish on all sides and edges; with metal shelf rests.'),
-              const CabinetDescription(title: 'Drawer', description: '5/8" thick solid wood on all sides; full extension pull-out; dovetail construction.'),
-              const CabinetDescription(title: 'Drawer Glide', description: 'Full extension pull-out; soft-close metal; concealed under-mount.'),
-              const CabinetDescription(title: 'Plywood Box', description: '5/8"-thick cabinet-grade plywood; clear coat finish on interior sides; matching color finish on exterior sides.'),
-              const CabinetDescription(title: 'Metal Bracket', description: 'Corner bracket reinforcements in base cabinets for maximum stability.'),
-              const CabinetDescription(title: 'Door Bumper', description: 'Promote quiet-closing and reduce slamming for maximum durability.'),
-              const CabinetDescription(title: 'Butt Doors', description: 'No center stile on any cabinets to allow full access.'),
-              const CabinetDescription(title: 'Certifications', description: 'KCMA Certified and CARB2 Compliant.'),
-              const CabinetDescription(title: 'Build Quality', description: 'All Solid Wood Construction and Environment Friendly.'),
+
+
+              // Product Description
+              Html(
+                data: _cabinetDetailController
+                    .cabinetDetailsModel.value.data?.description ?? 'Description',
+                style: {
+                  "body": Style(
+                    fontSize: FontSize(14),
+                    margin: Margins.zero,
+                    padding: HtmlPaddings.zero,
+                  ),
+                },
+              ),
               SizedBox(height: 15.h),
-              Column(
-                children: [
-                  ...List.generate(cabinetDetails.length, (index){
-                    return Card(
-                      color: Colors.grey.shade300,
-                      child: ExpansionTile(
-                        maintainState: true,
-                        title: Text(
-                          cabinetDetails[index]['title']!,
-                          style: AppStyles.h4(fontWeight: FontWeight.bold),
+              Obx(() {
+                List<PartData>? partsData = _cabinetDetailController.cabinetryPartsModel.value.data;
+                if (_cabinetDetailController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (partsData == null || partsData.isEmpty) {
+                  return const Text('No parts available');
+                }
+                int globalIndex = 0; // Track global index for quantities
+                return Column(
+                  children: [
+                    ...List.generate(partsData.length, (index) {
+                      final partsDataIndex = partsData[index];
+                      return Card(
+                        color: Colors.grey.shade300,
+                        child: ExpansionTile(
+                          maintainState: true,
+                          title: Text(
+                            partsDataIndex.stockItem?.title ?? '',
+                            style: AppStyles.h4(fontWeight: FontWeight.bold),
+                          ),
+                          children: [
+                            ...List.generate(partsDataIndex.categoriesWithParts?.length ?? 0, (indexB) {
+                              final categoriesWithPartsIndex = partsDataIndex.categoriesWithParts![indexB];
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(vertical: 4.h),
+                                    child: HeaderTitleBar(title: categoriesWithPartsIndex.category?.title ?? ''),
+                                  ),
+                                  Column(
+                                    children: List.generate(categoriesWithPartsIndex.parts?.length ?? 0, (indexC) {
+                                      final partsIndex = categoriesWithPartsIndex.parts![indexC];
+                                      final currentGlobalIndex = globalIndex;
+                                      globalIndex++; // Increment global index for the next part
+                                      return PartsCard(
+                                        cabinetDetailController: _cabinetDetailController,
+                                        index: currentGlobalIndex, // Pass global index
+                                        itemLength: categoriesWithPartsIndex.parts?.length ?? 0,
+                                        parts: partsIndex,
+                                      );
+                                    }),
+                                  ),
+                                ],
+                              );
+                            }),
+                          ],
                         ),
-                        children: [
-                          const HeaderTitleBar(title: 'Contemporary',),
-                          QtyAddProductCard(cabinetDetailController: _cabinetDetailController,index: index,itemLength: cabinetDetails.length,),
-
-                        ],
-                      ),
-                    );
-                  }),
-                ],
-              )
-
+                      );
+                    }),
+                  ],
+                );
+              }),
             ],
           ),
         ),
@@ -142,8 +182,3 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
     );
   }
 }
-
-
-
-
-

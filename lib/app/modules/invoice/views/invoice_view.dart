@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:jk_cabinet/app/modules/cart/controllers/cart_controller.dart';
+import 'package:jk_cabinet/app/modules/cart/controllers/make_payment_controller.dart';
 import 'package:jk_cabinet/app/modules/home/controllers/home_controller.dart';
 import 'package:jk_cabinet/app/modules/home/model/branch_model.dart';
 import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
@@ -22,6 +20,8 @@ import 'package:pdf/pdf.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../profile/controllers/profile_controller.dart';
+
 class InvoiceView extends StatefulWidget {
    InvoiceView({super.key});
 
@@ -33,6 +33,8 @@ class _InvoiceViewState extends State<InvoiceView> {
 
   final CartController _cartController=Get.find();
   final HomeController homeController = Get.put(HomeController());
+  final PaymentController _paymentController = Get.put(PaymentController());
+  final ProfileController _profileController = Get.put(ProfileController());
   BranchData? branchData;
   String transactionId='';
 
@@ -72,14 +74,16 @@ class _InvoiceViewState extends State<InvoiceView> {
                 CustomIconTextButton(
                     onPressed: ()async{
                   await generateShareInvoice();
+                  // _cartController.clearCart();
                 }, icon:Icons.receipt, label: 'Invoice')
               ],
             ),
              SizedBox(height: 16.h),
-            Text(
-              'Order ID: $transactionId',
-              style: AppStyles.h3(fontWeight: FontWeight.bold),
-            ),
+            Obx((){
+              return Text('Order ID : ${_paymentController.paymentResponseModel.value.data?.orderId ?? ''}',
+                style: AppStyles.h4(color: AppColors.primaryColor,fontWeight: FontWeight.bold),
+              );
+            }),
              SizedBox(height: 5.h),
             Text(
               'Order date: $formattedDate',
@@ -123,8 +127,12 @@ class _InvoiceViewState extends State<InvoiceView> {
                         /// Assembly
                         Text('\$${cartItem.assemblyCost.toStringAsFixed(2)}',style: AppStyles.h5()),
                         /// Total
-                        Text('\$${cartItem.totalPrice.toStringAsFixed(2)}',style: AppStyles.h5()),
-                      ],
+
+                       ///ki ki kire nony ki???
+                        Text(
+                          ' \$${cartItem.totalPrice.toDouble().toStringAsFixed(2)}',
+                          style: AppStyles.h5(color: AppColors.primaryColor),
+                        ),                      ],
                     ),
                   );
                 }),
@@ -154,8 +162,19 @@ class _InvoiceViewState extends State<InvoiceView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Sales Tax (6%) :',style: AppStyles.h4()),
-                    Text('\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2) }',style: AppStyles.h5()),
+                    Obx((){
+                      final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+                      final isTax = _profileController.profileModel.value.data?.isTax ?? false;
+                      return Text(
+                          'Sales Tax (${isTax ? tax : 0}%) :', style: AppStyles.h4());
+                    }),
+                    Obx((){
+                      final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+                      final isTax = _profileController.profileModel.value.data?.isTax ?? false;
+                      return Text(
+                          '\$${((isTax ? tax : 0) * _cartController.subtotal.value / 100).toStringAsFixed(2)}',
+                          style: AppStyles.h5());
+                    }),
                   ],
                 ),
                 verticalSpacing(12.h),
@@ -167,7 +186,7 @@ class _InvoiceViewState extends State<InvoiceView> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('Total :',style: AppStyles.h1(color: AppColors.primaryColor),),
-                  Text(' \$${_cartController.inTotal.value.toStringAsFixed(2)}',
+                  Text(' \$${_cartController.inTotal.value.toDouble().toStringAsFixed(2)}',
                     style: AppStyles.h1(color: AppColors.primaryColor),
                   ),
                 ],
@@ -197,9 +216,7 @@ class _InvoiceViewState extends State<InvoiceView> {
             style: pw.TextStyle(fontSize: 24, font: customFont),
           ),
           pw.SizedBox(height: 16.h),
-          pw.Text(
-            'Order ID: $transactionId',
-            style: pw.TextStyle(fontSize: 18, font: customFont),
+          pw. Text('Order ID : ${_paymentController.paymentResponseModel.value.data?.orderId ?? ''}',
           ),
           pw.SizedBox(height: 5.h),
           pw.SizedBox(height: 16),
@@ -268,9 +285,12 @@ class _InvoiceViewState extends State<InvoiceView> {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('Sales Tax (6%) :', style: pw.TextStyle(fontSize: 18, font: customFont)),
                   pw.Text(
-                    '\$${(_cartController.salesTax * _cartController.subtotal.value).toStringAsFixed(2)}',
+                    'Sales Tax (${_profileController.profileModel.value.data?.isTax ?? false ? _profileController.profileModel.value.data?.branchTax ?? 0 : 0}%) :',
+                    style: pw.TextStyle(fontSize: 18, font: customFont),
+                  ),
+                  pw.Text(
+                    '\$${((_profileController.profileModel.value.data?.isTax ?? false ? _profileController.profileModel.value.data?.branchTax ?? 0 : 0) * _cartController.subtotal.value / 100).toStringAsFixed(2)}',
                     style: pw.TextStyle(fontSize: 18, font: customFont),
                   ),
                 ],
@@ -304,6 +324,7 @@ class _InvoiceViewState extends State<InvoiceView> {
    final fileParams= ShareParams(text: 'Invoice PDF',files:[file],fileNameOverrides: ['my invoice.pdf']);
    final result = await SharePlus.instance.share(fileParams);
    if(result.status == ShareResultStatus.success){
+    await _cartController.clearCart();
      Get.snackbar('Success', 'Invoice PDF shared successfully');
    }
   }

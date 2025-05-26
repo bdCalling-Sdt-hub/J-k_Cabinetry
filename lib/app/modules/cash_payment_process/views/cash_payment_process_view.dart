@@ -1,28 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_common/get_reset.dart';
-import 'package:jk_cabinet/app/modules/home/widgets/topbar_contact_info.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
 import 'package:jk_cabinet/common/widgets/custom_appBar_title.dart';
 
+import '../../cart/controllers/make_payment_controller.dart';
+import '../../profile/controllers/profile_controller.dart';
 
-class CashPaymentProcessView extends StatelessWidget {
-  final String? userName;
-  final String? orderId;
 
-  const CashPaymentProcessView({
-    super.key,
-     this.userName='Shuvo Kh',
-     this.orderId='64654651',
-  });
+class CashPaymentProcessView extends StatefulWidget {
+  const CashPaymentProcessView({super.key});
+
+  @override
+  State<CashPaymentProcessView> createState() => _CashPaymentProcessViewState();
+}
+
+class _CashPaymentProcessViewState extends State<CashPaymentProcessView> {
+  final ProfileController _profileController = Get.put(ProfileController());
+
+  final PaymentController _paymentController = Get.put(PaymentController());
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBarTitle(),
+      appBar: const CustomAppBarTitle(),
       body: Padding(
         padding:  EdgeInsets.all(8.0.sp),
         child: Center(
@@ -42,14 +46,41 @@ class CashPaymentProcessView extends StatelessWidget {
                   size: 50.sp,
                 ),
                  SizedBox(height: 10.h),
-                Text('Thank you $userName, we are now preparing to process your order.',
-                  textAlign: TextAlign.center,
-                  style: AppStyles.h4(color: Colors.blue),
-                ),
+                Obx((){
+                  return Text('Thank you ${_profileController.profileModel.value.data?.firstName ?? ''}, we are now preparing to process your order.',
+                    textAlign: TextAlign.center,
+                    style: AppStyles.h4(color: Colors.blue),
+                  );
+                }),
                  SizedBox(height: 10.h),
-                Text('Order ID :  $orderId',
-                  style: AppStyles.h4(color: AppColors.primaryColor,fontWeight: FontWeight.bold),
-                ),
+
+                /// Order Id
+                Obx(() {
+                  final orderId = _paymentController.paymentResponseModel.value.data?.orderId ?? '';
+                  return GestureDetector(
+                    onTap: () {
+                      Clipboard.setData(ClipboardData(text: orderId));
+                      Get.snackbar(
+                        'Success',
+                        'Order ID copied to clipboard',
+                        snackPosition: SnackPosition.TOP,
+                        backgroundColor: Colors.green.withOpacity(0.1),
+                        duration: const Duration(seconds: 2),
+                      );
+                    },
+                    child: Wrap(
+                      // mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          'Order ID: $orderId',
+                          style: AppStyles.h4(color: AppColors.primaryColor, fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(width: 8.w),
+                        Center(child: Icon(Icons.copy, size: 20.sp, color: AppColors.primaryColor)),
+                      ],
+                    ),
+                  );
+                }),
                  SizedBox(height: 5.h),
                  Text('We will contact you for more information regarding the payment.',
                   textAlign: TextAlign.center,

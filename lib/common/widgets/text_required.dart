@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class TextRequired extends StatelessWidget {
   const TextRequired({
-    super.key, required this.text, this.textStyle,
+    super.key, required this.text, this.textStyle, this.isRequired = true,
   });
+
   final String text;
   final TextStyle? textStyle;
+  final bool isRequired;
   @override
   Widget build(BuildContext context) {
     return Text.rich(
@@ -15,9 +17,9 @@ class TextRequired extends StatelessWidget {
             text: text,
             style: textStyle??const TextStyle(fontSize: 16, color: Colors.black),
           ),
-          const TextSpan(
-            text: '*',
-            style: TextStyle(fontSize: 16, color: Colors.red),
+          TextSpan(
+            text: isRequired ? '*' : '',
+            style: const TextStyle(fontSize: 16, color: Colors.red),
           ),
         ],
       ),

@@ -1,0 +1,2 @@
+C:/Users/shuvo/StudioProjects/jk_cabinet/android/app/.cxx/Debug/v62651e2/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Users/shuvo/StudioProjects/jk_cabinet/android/app/.cxx/Debug/v62651e2/armeabi-v7a/CMakeFiles/rebuild_cache.dir
