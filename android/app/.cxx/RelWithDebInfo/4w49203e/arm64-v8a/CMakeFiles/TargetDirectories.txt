@@ -1,0 +1,2 @@
+C:/Users/shuvo/StudioProjects/jk_cabinet/android/app/.cxx/RelWithDebInfo/4w49203e/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Users/shuvo/StudioProjects/jk_cabinet/android/app/.cxx/RelWithDebInfo/4w49203e/arm64-v8a/CMakeFiles/rebuild_cache.dir

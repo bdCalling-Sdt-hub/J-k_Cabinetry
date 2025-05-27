@@ -37,7 +37,7 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
 
   BranchData? branchData;
 
-  // helper function to strip HTML tags
+  /// helper function to strip HTML tags
   String _stripHtmlTags(String htmlString) {
     // Replace common HTML entities
     var withoutEntities = htmlString
@@ -109,7 +109,7 @@ class _CabinetDetailsViewState extends State<CabinetDetailView> {
               SizedBox(height: 15.h),
 
 
-              // Product Description
+              /// Product Description
               Html(
                 data: _cabinetDetailController
                     .cabinetDetailsModel.value.data?.description ?? 'Description',
