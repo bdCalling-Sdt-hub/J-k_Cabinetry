@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
-import 'package:jk_cabinet/app/modules/all%20chats/views/all_chats_view.dart';
 
+import '../modules/all%20chats/views/all_chats_view.dart';
+import '../modules/all_orders/bindings/all_orders_view_binding.dart';
+import '../modules/all_orders/views/all_orders_view.dart';
 import '../modules/cabinet_detail/bindings/cabinet_detail_binding.dart';
 import '../modules/cabinet_detail/views/cabinet_detail_view.dart';
 import '../modules/cabinet_parts/bindings/cabinet_parts_binding.dart';
@@ -211,6 +213,11 @@ class AppPages {
       name: _Paths.SHOP_ACCESS,
       page: () => const ShopAccessView(),
       binding: ShopAccessBinding(),
+    ),
+    GetPage(
+      name: _Paths.ALL_ORDERS_VIEW,
+      page: () => AllOrdersView(),
+      binding: AllOrdersViewBinding(),
     ),
   ];
 }

@@ -33,7 +33,7 @@ class ProfileView extends StatelessWidget {
       //       child: Icon(Icons.arrow_back_ios)),
       // ),
 
-      appBar: CustomAppBarTitle(isShowBackButton: true,),
+      appBar: const CustomAppBarTitle(isShowBackButton: true,),
       body: RefreshIndicator(
         onRefresh: () async {
           await _profileController.fetchProfileData();
@@ -57,9 +57,7 @@ class ProfileView extends StatelessWidget {
                             radius: 60.r,
                             backgroundColor: Colors.grey,
                             backgroundImage: NetworkImage(
-                              ApiConstants.baseUrl +
-                                  _profileController
-                                      .profileModel.value.data!.profileImage!,
+                              ApiConstants.baseUrl + _profileController.profileModel.value.data!.profileImage!,
                             ),
                           );
                         }
@@ -85,16 +83,11 @@ class ProfileView extends StatelessWidget {
                           () {
                             if (_profileController.profileModel.value.data ==
                                 null) {
-                              return Text(
-                                '...',
-                                style: AppStyles.h3(),
-                              );
+                              return Text('...', style: AppStyles.h1());
                             } else {
                               return Text(
-                                _profileController
-                                        .profileModel.value.data!.firstName ??
-                                    '',
-                                style: AppStyles.h3(),
+                                _profileController.profileModel.value.data!.firstName ?? '',
+                                style: AppStyles.h1(),
                               );
                             }
                           },
@@ -102,22 +95,51 @@ class ProfileView extends StatelessWidget {
                         horizontalSpacing(8.w),
 
                         /// Edit Button
-                        ElevatedButton.icon(
+                        TextButton(
                           onPressed: () {
                             Get.toNamed(Routes.PROFILE_UPDATE);
                           },
-                          icon: Icon(Icons.edit, size: 16.sp),
-                          label: Text("Edit Profile", style: AppStyles.h5()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryColor,
-                            foregroundColor: Colors.white,
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15.w, vertical: 8.h),
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8.r),
                             ),
                           ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.edit, size: 16.sp, color: AppColors.primaryColor),
+                              SizedBox(width: 8.w),
+                              Text("Edit Profile", style: AppStyles.h5().copyWith(color: AppColors.primaryColor)),
+                            ],
+                          ),
                         ),
+
+                        // view all order
+                        TextButton(
+                          onPressed: () {
+                            Get.toNamed(Routes.ALL_ORDERS_VIEW);
+                          },
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            visualDensity: VisualDensity.compact,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.r),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.history, size: 16.sp, color: Colors.black54),
+                              SizedBox(width: 8.w),
+                              Text("View all orders", style: AppStyles.h5().copyWith(color: Colors.black54)),
+                            ],
+                          ),
+                        ),
+
                       ],
                     ),
                   ],

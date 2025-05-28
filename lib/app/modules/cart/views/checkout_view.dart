@@ -224,14 +224,10 @@ class CheckoutView extends StatelessWidget {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Name',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Quantity',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Assembly',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text('Total',
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Name', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Quantity', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Assembly', style: TextStyle(fontWeight: FontWeight.bold)),
+                      Text('Total', style: TextStyle(fontWeight: FontWeight.bold)),
                     ],
                   ),
                   Divider(
@@ -239,39 +235,28 @@ class CheckoutView extends StatelessWidget {
                   ),
 
                   // Cart Item
-                  ...List.generate(_cartController.cartItems.length, (index) {
-                    final cartItem = _cartController.cartItems[index];
-                    return Padding(
-                      padding: EdgeInsets.symmetric(vertical: 6.h),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          ///Name
-                          Text(
-                            cartItem.name,
-                            style: AppStyles.h5(),
+                  Obx(() {
+                    return Column(
+                      children: List.generate(_cartController.cartItems.length, (index) {
+                        final cartItem = _cartController.cartItems[index];
+                        return Padding(
+                          padding: EdgeInsets.symmetric(vertical: 6.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(cartItem.name, style: AppStyles.h5()),
+                              Text(cartItem.quantity.toString(), style: AppStyles.h5()),
+                              Text('\$${cartItem.assemblyCost.toStringAsFixed(2)}', style: AppStyles.h5()),
+                              Text('\$${cartItem.totalPrice.toStringAsFixed(2)}', style: AppStyles.h5()),
+                            ],
                           ),
-
-                          ///Qty
-                          Text(cartItem.quantity.toString(),
-                              style: AppStyles.h5()),
-
-                          /// Assembly
-                          Text('\$${cartItem.assemblyCost.toStringAsFixed(2)}',
-                              style: AppStyles.h5()),
-
-                          /// Total
-                          Text('\$${cartItem.totalPrice.toStringAsFixed(2)}',
-                              style: AppStyles.h5()),
-                        ],
-                      ),
+                        );
+                      }),
                     );
                   }),
+
                   verticalSpacing(12.h),
-                  Text(
-                    'Shipping :-',
-                    style: AppStyles.h4(),
-                  ),
+                  Text('Shipping :-', style: AppStyles.h4()),
 
                   verticalSpacing(8.h),
                   Padding(

@@ -38,6 +38,7 @@ abstract class Routes {
   static const TERMS_CONDITION = _Paths.TERMS_CONDITION;
   static const CABINET_DETAIL_TAB_VIEW = _Paths.CABINET_DETAIL_TAB_VIEW;
   static const SHOP_ACCESS = _Paths.SHOP_ACCESS;
+  static const ALL_ORDERS_VIEW = _Paths.ALL_ORDERS_VIEW;
 }
 
 abstract class _Paths {
@@ -76,4 +77,5 @@ abstract class _Paths {
   static const SUPPORT = '/support';
   static const TERMS_CONDITION = '/term_condition';
   static const SHOP_ACCESS = '/shop-access';
+  static const ALL_ORDERS_VIEW = '/all-orders-view';
 }

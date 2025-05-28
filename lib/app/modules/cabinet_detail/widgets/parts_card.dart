@@ -125,10 +125,8 @@ class _PartsCardState extends State<PartsCard> {
                     //     : 0.0,
                     price: isDealer && widget.parts.dealerPrice != null ? widget.parts.dealerPrice!.toDouble() : widget.parts.price != null ? widget.parts.price!.toDouble() : 0.0,
                     quantity: qty,
-                    productImg: widget.parts.images != null &&
-                            widget.parts.images!.isNotEmpty
-                        ? '${ApiConstants.imageBaseUrl}/${widget.parts
-                        .images?[0]}'
+                    productImg: widget.parts.images != null && widget.parts.images!.isNotEmpty
+                        ? '${ApiConstants.imageBaseUrl}/${widget.parts.images?[0]}'
                         : AppConstants.demoImage,
                   );
                 },

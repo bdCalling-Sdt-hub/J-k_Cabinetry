@@ -24,13 +24,13 @@ class ShimmerItemDetails extends StatelessWidget {
                 children: [
                   Text(
                     titleOne,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     height: 50,
                     width: double.infinity,
@@ -39,16 +39,16 @@ class ShimmerItemDetails extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Text(
                     titleTwo,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.bold,
                       color: Colors.grey,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Container(
                     height: 150,
                     width: double.infinity,
@@ -64,7 +64,7 @@ class ShimmerItemDetails extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Container(
                     height: 50,
                     width: double.infinity,

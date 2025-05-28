@@ -100,6 +100,7 @@ class _CashPaymentProcessViewState extends State<CashPaymentProcessView> {
                     ),
                     onPressed: () {
                       _invoiceController.getInvoice();
+                      Get.toNamed(Routes.INVOICE);
                     },
                     child: const Text(
                       'View Details',

@@ -26,21 +26,22 @@ class OrderData {
   String? orderId;
   String? createdAt;
   List<Products>? products;
-  int? total;
-  int? salesTaxAmount;
-  int? salesTax;
-  int? subTotal;
-  int? shipping;
+  num? total;
+  num? salesTaxAmount;
+  num? salesTax;
+  num? subTotal;
+  num? shipping;
 
-  OrderData(
-      {this.orderId,
-        this.createdAt,
-        this.products,
-        this.total,
-        this.salesTaxAmount,
-        this.salesTax,
-        this.subTotal,
-        this.shipping});
+  OrderData({
+    this.orderId,
+    this.createdAt,
+    this.products,
+    this.total,
+    this.salesTaxAmount,
+    this.salesTax,
+    this.subTotal,
+    this.shipping,
+  });
 
   OrderData.fromJson(Map<String, dynamic> json) {
     orderId = json['orderId'];
@@ -78,7 +79,7 @@ class Products {
   String? name;
   int? quantity;
   String? assembly;
-  int? total;
+  num? total;
   String? sId;
 
   Products({this.name, this.quantity, this.assembly, this.total, this.sId});
