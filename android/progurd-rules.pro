@@ -1,11 +1,7 @@
-# Suppress warnings for missing Stripe PushProvisioning classes
--dontwarn com.stripe.android.pushProvisioning.PushProvisioningActivity$g
--dontwarn com.stripe.android.pushProvisioning.PushProvisioningActivityStarter$Args
--dontwarn com.stripe.android.pushProvisioning.PushProvisioningActivityStarter$Error
--dontwarn com.stripe.android.pushProvisioning.PushProvisioningActivityStarter
--dontwarn com.stripe.android.pushProvisioning.PushProvisioningEphemeralKeyProvider
+# Stripe SDK - Fix for R8 missing classes error
+-keep class com.stripe.android.** { *; }
+-dontwarn com.stripe.android.**
 
-# Keep the Stripe Push Provisioning classes
--keep class com.stripe.android.pushProvisioning.** { *; }
-
-
+# React Native Stripe SDK
+-keep class com.reactnativestripesdk.** { *; }
+-dontwarn com.reactnativestripesdk.**

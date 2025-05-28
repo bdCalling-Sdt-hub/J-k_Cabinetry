@@ -3,8 +3,6 @@ import 'package:get/get.dart';
 import 'package:jk_cabinet/app/data/api_constants.dart';
 import 'package:jk_cabinet/common/app_constant/app_constant.dart';
 import 'package:jk_cabinet/common/prefs_helper/prefs_helpers.dart';
-
-import '../../../../main.dart';
 import '../../../data/network_caller.dart';
 import '../../../routes/app_pages.dart';
 import '../models/auth_success_model.dart';
@@ -19,35 +17,6 @@ class SignInController extends GetxController {
   RxBool verifyLoading = false.obs;
   RxBool isUserVerified = false.obs;
   RxString errorMessage = ''.obs;
-
-  // Future<void> login() async {
-  //   Map<String, String> headers = {
-  //     'Content-Type': 'application/json',
-  //   };
-  //
-  //   var requestBody = {
-  //     'email': emailCtrl.text.trim(),
-  //     'password': passCtrl.text,
-  //   };
-  //
-  //   try {
-  //     verifyLoading.value = true;
-  //     update();
-  //
-  //     Uri uri = Uri.parse(ApiConstants.logInUrl);
-  //
-  //     final response = await post(uri, headers: headers, body: jsonEncode(requestBody));
-  //
-  //     if (response.statusCode == 200) {
-  //
-  //     }
-  //
-  //   } on Exception catch (e) {
-  //     errorMessage.value = 'Something went wrong';
-  //   } finally {
-  //     verifyLoading.value = false;
-  //   }
-  // }
 
   Future<bool> login() async {
     bool isSuccess = false;

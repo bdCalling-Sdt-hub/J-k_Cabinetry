@@ -29,12 +29,18 @@ class NetworkCaller {
   Future<NetworkResponse> getRequest(String url,  {Map<String, dynamic>? queryParams, String? accessToken}) async {
     try {
 
-      Map<String, String> headers = {
-        'content-type' : 'application/json'
+      // Map<String, String> headers = {
+      //   'content-type' : 'application/json'
+      // };
+      // if (accessToken != null) {
+      //   headers['token'] = accessToken;
+      // }
+
+      final headers = <String, String>{
+        'Authorization': accessToken != null ? 'Bearer $accessToken' : '',
+        //'Authorization': token ?? '',
+        // 'Content-Type': files != null ? 'multipart/form-data' : 'application/json',
       };
-      if (accessToken != null) {
-        headers['token'] = accessToken;
-      }
 
       if (queryParams != null) {
         url += '?';

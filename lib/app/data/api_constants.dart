@@ -51,5 +51,6 @@ static String  searchNameaslkjdUrl (String name)=> '$baseUrl/useasdbhmnsars?full
 
 // Order
   static String createOrderUrl= '$baseUrl/order/create-order';
+  static String getInvoiceUrl(String orderSID)=> '$baseUrl/order/read-order-for-view-details/$orderSID';
 
 }

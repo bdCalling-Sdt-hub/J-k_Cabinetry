@@ -307,7 +307,6 @@ class CheckoutView extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // todo: add conditionals here (check true false if tax applies for that user)
                       Obx((){
                         final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
                         final isTax = _profileController.profileModel.value.data?.isTax ?? false;

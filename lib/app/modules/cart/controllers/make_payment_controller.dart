@@ -179,6 +179,13 @@ class PaymentController extends GetxController{
       "state": userData?.state,
       "zipCode": userData?.zipCode,
       "isBillingSame": true,
+      //------ needed for the invoice
+      "total": _cartController.inTotal.toDouble(),
+      "salesTaxAmount": _cartController.salesTaxAmount.toDouble(),
+      "salesTax": _cartController.salesTax.toDouble(),
+      "subTotal": _cartController.subtotal.toDouble(),
+      "shipping": _cartController.shippingCost.toDouble(),
+      //----------------------------
       "paymentData" : [
         {
           "stripPaymentId" : transactionId,
@@ -208,6 +215,13 @@ class PaymentController extends GetxController{
       "state": _cartController.stateCtrl.text,
       "zipCode": _cartController.zipCodeCtrl.text,
       "isBillingSame": false,
+      //------ needed for the invoice
+      "total": _cartController.inTotal.toDouble(),
+      "salesTaxAmount": _cartController.salesTaxAmount.toDouble(),
+      "salesTax": _cartController.salesTax.toDouble(),
+      "subTotal": _cartController.subtotal.toDouble(),
+      "shipping": _cartController.shippingCost.toDouble(),
+      //----------------------------
       "paymentData" : [
         {
           "stripPaymentId" : transactionId,
@@ -239,7 +253,7 @@ class PaymentController extends GetxController{
 
     var responseBody = jsonDecode(request.body);
     if (request.statusCode == 200) {
-      // paymentResponseModel.value = PaymentResponseModel.fromJson(responseBody);
+      paymentResponseModel.value = PaymentResponseModel.fromJson(responseBody);
       _logger.i("Payment response: $responseBody");
       await _cartController.clearCart();
       Get.dialog(
@@ -286,6 +300,13 @@ class PaymentController extends GetxController{
       "state": userData?.state,
       "zipCode": userData?.zipCode,
       "isBillingSame": true,
+      //------ needed for the invoice
+      "total": _cartController.inTotal.toDouble(),
+      "salesTaxAmount": _cartController.salesTaxAmount.toDouble(),
+      "salesTax": _cartController.salesTax.toDouble(),
+      "subTotal": _cartController.subtotal.toDouble(),
+      "shipping": _cartController.shippingCost.toDouble(),
+      //----------------------------
       "products": _cartController.cartItems.map((item) => {
         "name": item.name,
         "quantity": item.quantity,
@@ -308,6 +329,13 @@ class PaymentController extends GetxController{
       "state": _cartController.stateCtrl.text,
       "zipCode": _cartController.zipCodeCtrl.text,
       "isBillingSame": false,
+      //------ needed for the invoice
+      "total": _cartController.inTotal.toDouble(),
+      "salesTaxAmount": _cartController.salesTaxAmount.toDouble(),
+      "salesTax": _cartController.salesTax.toDouble(),
+      "subTotal": _cartController.subtotal.toDouble(),
+      "shipping": _cartController.shippingCost.toDouble(),
+      //----------------------------
       "products": _cartController.cartItems.map((item) => {
         "name": item.name,
         "quantity": item.quantity,

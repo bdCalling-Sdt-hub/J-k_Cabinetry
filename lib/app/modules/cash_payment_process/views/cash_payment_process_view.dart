@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:jk_cabinet/app/modules/invoice/controllers/invoice_controller.dart';
 import 'package:jk_cabinet/app/routes/app_pages.dart';
 import 'package:jk_cabinet/common/app_color/app_colors.dart';
 import 'package:jk_cabinet/common/app_text_style/style.dart';
@@ -20,8 +21,8 @@ class CashPaymentProcessView extends StatefulWidget {
 
 class _CashPaymentProcessViewState extends State<CashPaymentProcessView> {
   final ProfileController _profileController = Get.put(ProfileController());
-
   final PaymentController _paymentController = Get.put(PaymentController());
+  final InvoiceController _invoiceController = Get.put(InvoiceController());
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +99,7 @@ class _CashPaymentProcessViewState extends State<CashPaymentProcessView> {
                       ),
                     ),
                     onPressed: () {
-                     Get.toNamed(Routes.INVOICE);
+                      _invoiceController.getInvoice();
                     },
                     child: const Text(
                       'View Details',

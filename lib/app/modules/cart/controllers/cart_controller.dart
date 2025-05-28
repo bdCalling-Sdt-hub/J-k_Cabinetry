@@ -30,7 +30,10 @@ class CartController extends GetxController {
   RxBool isNewBillingAddress= false.obs;
  RxDouble shippingCost = 10.01.obs;
  // RxDouble salesTax = 0.06.obs;
+   late RxInt salesTaxAmount;
    late RxInt salesTax;
+   // final tax = _profileController.profileModel.value.data?.branchTax ?? 0.0;
+   // late RxInt salesTaxAmount;
 
 
   final DatabaseHelper _dbHelper = DatabaseHelper(dbName: 'jk_cabinet.db');
@@ -39,8 +42,9 @@ class CartController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    final tax = (_profileController.profileModel.value.data?.branchTax ?? 0).obs;
-    salesTax = ((tax * subtotal.value / 100).round()).obs;
+    final taxPercent = (_profileController.profileModel.value.data?.branchTax ?? 0).obs;
+    salesTaxAmount = ((taxPercent * subtotal.value / 100).round()).obs;
+    salesTax = taxPercent;
     loadCartItems();
     WidgetsBinding.instance.addPostFrameCallback((__){
       // cartItems.addAll([

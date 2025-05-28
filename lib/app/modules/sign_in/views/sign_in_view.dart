@@ -138,8 +138,7 @@ class _SignInViewState extends State<SignInView> {
                   /// Login Button
 
                   SizedBox(height: 20.h),
-                  Obx(
-                        () {
+                  Obx(() {
                       return CustomButton(
                         loading: _loginController.verifyLoading.value,
                         onTap: _onTapLogin,
