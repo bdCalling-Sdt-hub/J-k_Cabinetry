@@ -1,6 +1,3 @@
-
-/// cabinet_parts_model.dart
-
 class PartResponseModel {
   bool? success;
   String? message;

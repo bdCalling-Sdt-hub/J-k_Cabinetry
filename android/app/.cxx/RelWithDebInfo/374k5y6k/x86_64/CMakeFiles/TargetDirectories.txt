@@ -1,0 +1,2 @@
+/Users/redwanahmedfahim/StudioProjects/J-k_Cabinetry/android/app/.cxx/RelWithDebInfo/374k5y6k/x86_64/CMakeFiles/edit_cache.dir
+/Users/redwanahmedfahim/StudioProjects/J-k_Cabinetry/android/app/.cxx/RelWithDebInfo/374k5y6k/x86_64/CMakeFiles/rebuild_cache.dir
